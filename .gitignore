@@ -1,0 +1,9 @@
+node_modules/
+auth_info_baileys/
+baileys_store.json
+storage/
+temp/
+*.log
+.env
+.DS_Store
+Thumbs.db
