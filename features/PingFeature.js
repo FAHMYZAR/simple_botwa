@@ -1,7 +1,7 @@
 class PingFeature {
   constructor() {
     this.name = 'ping';
-    this.description = '_Cek ping bot_';
+    this.description = '_Cek respon bot_';
     this.ownerOnly = false;
   }
 
@@ -9,21 +9,16 @@ class PingFeature {
     try {
       const start = Date.now();
 
-      await sock.sendMessage(m.key.remoteJid, {
-        text: 'Menghitung...'
-      });
+      const ping = Date.now() - start;
 
-      const pingTime = Date.now() - start;
-
-      // Delay kecil biar WA server aman
-      await new Promise(r => setTimeout(r, 500));
-
-      await sock.sendMessage(m.key.remoteJid, {
-        text: `${pingTime}ms`
-      });
+      await sock.sendMessage(
+        m.key.remoteJid,
+        { text: `${ping}ms` },
+        { quoted: m }
+      );
 
     } catch (error) {
-      console.error('[PING ERROR]', error.message);
+      console.error('[PING] Error:', error.message);
     }
   }
 }
