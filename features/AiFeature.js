@@ -20,14 +20,14 @@ class AiFeature {
       let prompt = messageText.trim().split(' ').slice(1).join(' ');
 
       // ===============================
-      // 2. Handle quoted message (teks saja)
+      // 2. Handle quoted text (tanpa media)
       // ===============================
       const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
 
       if (quoted) {
         if (quoted.imageMessage || quoted.videoMessage || quoted.stickerMessage) {
           await sock.sendMessage(m.key.remoteJid, {
-            text: '_maaf, AI hanya mendukung pesan teks untuk saat ini_'
+            text: '_AI hanya mendukung pesan teks untuk saat ini_'
           });
           return;
         }
@@ -52,35 +52,23 @@ class AiFeature {
       }
 
       // ===============================
-      // 3. Kirim reaction (indikator proses)
-      // ===============================
-      await sock.sendMessage(m.key.remoteJid, {
-        react: { text: '👨🏻‍💻', key: m.key }
-      });
-
-      // Delay kecil biar WA server aman
-      await new Promise(r => setTimeout(r, 600));
-
-      // ===============================
-      // 4. System prompt
+      // 3. System Prompt (ringkas & efisien)
       // ===============================
       const now = new Date();
       const currentDateTime = now.toLocaleString('id-ID', {
         timeZone: 'Asia/Jakarta'
       });
 
-      const systemPrompt = `ARTIFICIAL INTELLIGENCE by fahmyzzx
-
-ATURAN
-- Jangan awali dengan perkenalan
+      const systemPrompt = `Jawab sebagai AI WhatsApp.
 - Langsung ke inti
-- Singkat, padat, natural
-- Bahasa indonesia gaul tapi sopan
-- Format WhatsApp (* _ \` >)
+- Singkat, natural, sopan
+- Bahasa Indonesia santai
+- Gunakan format WhatsApp (* _ \` >)
+- Jangan pakai LaTeX
 
-Waktu sekarang: ${currentDateTime} WIB
+Waktu: ${currentDateTime} WIB
 
-User Query:
+User:
 ${prompt}`;
 
       const apiUrl =
@@ -88,7 +76,7 @@ ${prompt}`;
         encodeURIComponent(systemPrompt);
 
       // ===============================
-      // 5. Fetch AI (pakai timeout)
+      // 4. Fetch AI (dengan timeout)
       // ===============================
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 15000);
@@ -103,16 +91,16 @@ ${prompt}`;
 
       const data = await response.json();
 
-      if (!data || !data.chat) {
+      if (!data?.chat) {
         throw new Error('No AI response');
       }
 
-      let replyText = data.chat
+      const replyText = data.chat
         .replace(/\\n/g, '\n')
         .replace(/\*\*/g, '*');
 
       // ===============================
-      // 6. Kirim jawaban
+      // 5. Kirim jawaban (1x saja)
       // ===============================
       await sock.sendMessage(
         m.key.remoteJid,
@@ -120,29 +108,18 @@ ${prompt}`;
         { quoted: m }
       );
 
-      // ===============================
-      // 7. Hapus reaction (PAKAI DELAY)
-      // ===============================
-      await new Promise(r => setTimeout(r, 800));
-
-      await sock.sendMessage(m.key.remoteJid, {
-        react: { text: '', key: m.key }
-      });
-
     } catch (error) {
       console.error('[AI] Error:', error.message);
 
       // Jangan balas kalau kena rate limit
-      if (error.message?.includes('rate-overlimit')) {
-        return;
-      }
+      if (error.message?.includes('rate-overlimit')) return;
 
       try {
         await sock.sendMessage(m.key.remoteJid, {
           text: 'Maaf, AI sedang sibuk atau terjadi kesalahan.'
         });
       } catch {
-        // sengaja dikosongkan (biar tidak loop)
+        // sengaja kosong, cegah loop
       }
     }
   }
