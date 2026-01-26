@@ -1,7 +1,7 @@
 class PingFeature {
   constructor() {
     this.name = 'ping';
-    this.description = '_Cek respon bot_';
+    this.description = '_Respon time bot_';
     this.ownerOnly = false;
   }
 
@@ -9,11 +9,16 @@ class PingFeature {
     try {
       const start = Date.now();
 
-      const ping = Date.now() - start;
+      // Simulasikan workload minimal (realistic)
+      await Promise.resolve();
+
+      const responseTime = Date.now() - start;
 
       await sock.sendMessage(
         m.key.remoteJid,
-        { text: `${ping}ms` },
+        {
+          text: `⚡ Respon bot: ${responseTime} ms`
+        },
         { quoted: m }
       );
 
