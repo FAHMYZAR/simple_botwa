@@ -8,22 +8,22 @@ class PingFeature {
   async execute(m, sock) {
     try {
       const start = Date.now();
-      const msg = await sock.sendMessage(m.key.remoteJid, {
-        text: 'Menghitung...'
-      });
-      const end = Date.now();
-
-      const pingTime = end - start;
 
       await sock.sendMessage(m.key.remoteJid, {
-        text: `${pingTime}ms`,
-        edit: msg.key
+        text: 'Menghitung...'
+      });
+
+      const pingTime = Date.now() - start;
+
+      // Delay kecil biar WA server aman
+      await new Promise(r => setTimeout(r, 500));
+
+      await sock.sendMessage(m.key.remoteJid, {
+        text: `${pingTime}ms`
       });
 
     } catch (error) {
-      await sock.sendMessage(m.key.remoteJid, {
-        text: `*ERROR*\n\n> Pesan : ${error.message}`
-      });
+      console.error('[PING ERROR]', error.message);
     }
   }
 }
