@@ -7,17 +7,20 @@ class PingFeature {
 
   async execute(m, sock) {
     try {
-      const start = Date.now();
+      const start = process.hrtime.bigint();
 
-      // Simulasikan workload minimal (realistic)
+      // workload mikro (realistis)
       await Promise.resolve();
 
-      const responseTime = Date.now() - start;
+      const end = process.hrtime.bigint();
+
+      // nanosecond → millisecond (float)
+      const responseMs = Number(end - start) / 1_000_000;
 
       await sock.sendMessage(
         m.key.remoteJid,
         {
-          text: `⚡ Respon bot: ${responseTime} ms`
+          text: `Pong: ${responseMs.toFixed(3)} ms`
         },
         { quoted: m }
       );
