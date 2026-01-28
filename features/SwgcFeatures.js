@@ -8,7 +8,7 @@ const crypto = require('crypto');
 class GroupStatusFeature {
     constructor() {
         this.name = 'swgc';
-        this.description = '_Update SwGc_';
+        this.description = '_Update Status Grup (text / reply / media / video)_';
         this.ownerOnly = false;
     }
 
@@ -23,69 +23,74 @@ class GroupStatusFeature {
                 return;
             }
 
-            // ===============================
-            // Ambil message utama
-            // ===============================
             const msg = m.message;
             const body =
                 msg.conversation ||
                 msg.extendedTextMessage?.text ||
                 msg.imageMessage?.caption ||
                 msg.videoMessage?.caption ||
+                msg.documentMessage?.caption ||
                 '';
 
-            // ===============================
-            // Ambil quoted message (jika ada)
-            // ===============================
             const context = msg.extendedTextMessage?.contextInfo;
             const quoted = context?.quotedMessage;
 
             let text = '';
-            let media = null;
+            let mediaBuffer = null;
+            let mediaType = null; // 'image' | 'video'
 
             // ===============================
-            // 1️⃣ Jika reply pesan
+            // 1️⃣ Ambil dari quoted message
             // ===============================
-            if (quoted) {
-                text =
-                    quoted.conversation ||
-                    quoted.extendedTextMessage?.text ||
-                    quoted.imageMessage?.caption ||
-                    quoted.videoMessage?.caption ||
-                    '';
+            const source = quoted || msg;
 
-                if (quoted.imageMessage || quoted.videoMessage) {
-                    try {
-                        media = await downloadMediaMessage(
-                            { message: quoted },
-                            'buffer',
-                            {},
-                            { logger: console, reuploadRequest: sock.updateMediaMessage }
-                        );
-                    } catch (e) {
-                        console.error('[SWGC] Failed download quoted media:', e);
-                    }
-                }
+            // ---- TEXT ----
+            text =
+                source.conversation ||
+                source.extendedTextMessage?.text ||
+                source.imageMessage?.caption ||
+                source.videoMessage?.caption ||
+                source.documentMessage?.caption ||
+                '';
+
+            // ---- IMAGE ----
+            if (source.imageMessage) {
+                mediaBuffer = await downloadMediaMessage(
+                    { message: { imageMessage: source.imageMessage } },
+                    'buffer',
+                    {},
+                    { logger: console, reuploadRequest: sock.updateMediaMessage }
+                );
+                mediaType = 'image';
             }
 
-            // ===============================
-            // 2️⃣ Jika kirim media + .swgc
-            // ===============================
-            if (!media && (msg.imageMessage || msg.videoMessage)) {
-                try {
-                    media = await downloadMediaMessage(
-                        m,
+            // ---- VIDEO PLAYER ----
+            else if (source.videoMessage) {
+                mediaBuffer = await downloadMediaMessage(
+                    { message: { videoMessage: source.videoMessage } },
+                    'buffer',
+                    {},
+                    { logger: console, reuploadRequest: sock.updateMediaMessage }
+                );
+                mediaType = 'video';
+            }
+
+            // ---- DOCUMENT VIDEO ----
+            else if (source.documentMessage) {
+                const mimetype = source.documentMessage.mimetype || '';
+                if (mimetype.startsWith('video')) {
+                    mediaBuffer = await downloadMediaMessage(
+                        { message: { documentMessage: source.documentMessage } },
                         'buffer',
                         {},
                         { logger: console, reuploadRequest: sock.updateMediaMessage }
                     );
-                } catch (e) {
-                    console.error('[SWGC] Failed download media:', e);
+                    mediaType = 'video'; // ⚠️ convert document → video
                 }
             }
 
             // ===============================
-            // 3️⃣ Parse teks dari command (.swgc ...)
+            // 2️⃣ Parse teks dari command (.swgc ...)
             // ===============================
             if (body) {
                 const parts = body.trim().split(/\s+/);
@@ -100,9 +105,14 @@ class GroupStatusFeature {
             // ===============================
             // Validasi akhir
             // ===============================
-            if (!text && !media) {
+            if (!text && !mediaBuffer) {
                 await sock.sendMessage(jid, {
-                    text: '❌ Tidak ada konten.\nGunakan `.swgc teks`, reply pesan, atau kirim media.'
+                    text:
+                        '❌ Tidak ada konten.\n\n' +
+                        'Gunakan:\n' +
+                        '• `.swgc teks`\n' +
+                        '• reply pesan / media\n' +
+                        '• kirim video + `.swgc`'
                 });
                 return;
             }
@@ -111,16 +121,19 @@ class GroupStatusFeature {
                 react: { text: '⏳', key: m.key }
             });
 
-            console.log('[SWGC] Group:', jid);
-            console.log('[SWGC] Text:', text || '(no text)');
-            console.log('[SWGC] Media:', media ? 'YES' : 'NO');
+            console.log('[SWGC]', {
+                group: jid,
+                text: text || '(no text)',
+                mediaType: mediaType || 'none',
+            });
 
             // ===============================
-            // Build content
+            // Build WA Status Content
             // ===============================
             const content = {
                 ...(text ? { text } : {}),
-                ...(media ? { image: media } : {}),
+                ...(mediaType === 'image' ? { image: mediaBuffer } : {}),
+                ...(mediaType === 'video' ? { video: mediaBuffer } : {}),
                 backgroundColor: '#1b2226',
             };
 
@@ -131,7 +144,7 @@ class GroupStatusFeature {
 
             const messageSecret = crypto.randomBytes(32);
 
-            const msgStatus = generateWAMessageFromContent(
+            const statusMsg = generateWAMessageFromContent(
                 jid,
                 {
                     messageContextInfo: { messageSecret },
@@ -145,8 +158,8 @@ class GroupStatusFeature {
                 {}
             );
 
-            await sock.relayMessage(jid, msgStatus.message, {
-                messageId: msgStatus.key.id,
+            await sock.relayMessage(jid, statusMsg.message, {
+                messageId: statusMsg.key.id,
             });
 
             await sock.sendMessage(jid, {
