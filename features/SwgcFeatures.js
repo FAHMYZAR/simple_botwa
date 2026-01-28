@@ -21,15 +21,11 @@ class GroupStatusFeature {
             }
 
             const msg = m.message;
-            const body =
-                msg.conversation ||
-                msg.extendedTextMessage?.text ||
-                msg.imageMessage?.caption ||
-                msg.videoMessage?.caption ||
-                '';
-
-            const context = msg.extendedTextMessage?.contextInfo;
+            const ext = msg.extendedTextMessage;
+            const context = ext?.contextInfo;
             const quoted = context?.quotedMessage;
+
+            const stanzaId = context?.stanzaId;
 
             let mediaBuffer = null;
             let mediaType = null; // image | video
@@ -37,83 +33,129 @@ class GroupStatusFeature {
             let overrideCaption = '';
 
             // ===============================
-            // 1️⃣ Parse caption override dari !swgc
+            // 1️⃣ Parse caption override (!swgc xxx)
             // ===============================
+            const body =
+                msg.conversation ||
+                ext?.text ||
+                msg.imageMessage?.caption ||
+                msg.videoMessage?.caption ||
+                '';
+
             if (body) {
                 const parts = body.trim().split(/\s+/);
                 if (parts[0].toLowerCase().includes('swgc')) {
                     parts.shift();
-                    overrideCaption = parts.join(' ').trim(); // BISA KOSONG
+                    overrideCaption = parts.join(' ').trim();
                 }
             }
 
             // ===============================
-            // 2️⃣ PRIORITAS: reply media
+            // 2️⃣ PRIORITAS: REPLY MEDIA
             // ===============================
-            const source = quoted || msg;
+            if (quoted && stanzaId) {
+                // IMAGE
+                if (quoted.imageMessage) {
+                    captionFromMedia = quoted.imageMessage.caption || '';
+                    mediaBuffer = await downloadMediaMessage(
+                        {
+                            message: quoted,
+                            key: {
+                                remoteJid: jid,
+                                id: stanzaId,
+                                fromMe: false,
+                            },
+                        },
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                    mediaType = 'image';
+                }
 
-            // ---- IMAGE ----
-            if (source.imageMessage) {
-                captionFromMedia = source.imageMessage.caption || '';
-                mediaBuffer = await downloadMediaMessage(
-                    { message: { imageMessage: source.imageMessage } },
-                    'buffer',
-                    {},
-                    { logger: console, reuploadRequest: sock.updateMediaMessage }
-                );
-                mediaType = 'image';
+                // VIDEO PLAYER
+                else if (quoted.videoMessage) {
+                    captionFromMedia = quoted.videoMessage.caption || '';
+                    mediaBuffer = await downloadMediaMessage(
+                        {
+                            message: quoted,
+                            key: {
+                                remoteJid: jid,
+                                id: stanzaId,
+                                fromMe: false,
+                            },
+                        },
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                    mediaType = 'video';
+                }
+
+                // DOCUMENT VIDEO
+                else if (quoted.documentMessage?.mimetype?.startsWith('video')) {
+                    captionFromMedia = quoted.documentMessage.caption || '';
+                    mediaBuffer = await downloadMediaMessage(
+                        {
+                            message: quoted,
+                            key: {
+                                remoteJid: jid,
+                                id: stanzaId,
+                                fromMe: false,
+                            },
+                        },
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                    mediaType = 'video';
+                }
             }
 
-            // ---- VIDEO PLAYER ----
-            else if (source.videoMessage) {
-                captionFromMedia = source.videoMessage.caption || '';
-                mediaBuffer = await downloadMediaMessage(
-                    { message: { videoMessage: source.videoMessage } },
-                    'buffer',
-                    {},
-                    { logger: console, reuploadRequest: sock.updateMediaMessage }
-                );
-                mediaType = 'video';
-            }
-
-            // ---- DOCUMENT VIDEO ----
-            else if (source.documentMessage?.mimetype?.startsWith('video')) {
-                captionFromMedia = source.documentMessage.caption || '';
-                mediaBuffer = await downloadMediaMessage(
-                    { message: { documentMessage: source.documentMessage } },
-                    'buffer',
-                    {},
-                    { logger: console, reuploadRequest: sock.updateMediaMessage }
-                );
-                mediaType = 'video';
-            }
-
             // ===============================
-            // 3️⃣ Tentukan caption final
+            // 3️⃣ Kirim media langsung + !swgc
             // ===============================
-            let finalText = '';
-
-            if (overrideCaption) {
-                // User eksplisit override
-                finalText = overrideCaption;
-            } else if (captionFromMedia) {
-                // Pakai caption lama
-                finalText = captionFromMedia;
-            } else if (!mediaBuffer && overrideCaption) {
-                finalText = overrideCaption;
+            if (!mediaBuffer) {
+                if (msg.imageMessage) {
+                    captionFromMedia = msg.imageMessage.caption || '';
+                    mediaBuffer = await downloadMediaMessage(
+                        m,
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                    mediaType = 'image';
+                } else if (msg.videoMessage) {
+                    captionFromMedia = msg.videoMessage.caption || '';
+                    mediaBuffer = await downloadMediaMessage(
+                        m,
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                    mediaType = 'video';
+                }
             }
 
             // ===============================
-            // 4️⃣ Kasus tanpa media sama sekali
+            // 4️⃣ Tentukan caption FINAL
             // ===============================
-            if (!mediaBuffer && !finalText) {
+            const finalCaption =
+                overrideCaption ||
+                captionFromMedia ||
+                '';
+
+            // ===============================
+            // VALIDASI
+            // ===============================
+            if (!mediaBuffer && !finalCaption) {
                 await sock.sendMessage(jid, {
                     text:
                         '❌ Tidak ada konten.\n\n' +
                         'Gunakan:\n' +
-                        '• `!swgc teks`\n' +
                         '• reply media\n' +
-                        '• reply media + `!swgc caption baru`'
+                        '• reply media + `!swgc caption`\n' +
+                        '• kirim media + `!swgc caption`'
                 });
                 return;
             }
@@ -124,15 +166,15 @@ class GroupStatusFeature {
 
             console.log('[SWGC]', {
                 group: jid,
-                media: mediaType || 'none',
-                caption: finalText || '(none)',
+                media: mediaType,
+                caption: finalCaption || '(none)',
             });
 
             // ===============================
-            // 5️⃣ Build status content
+            // BUILD STATUS
             // ===============================
             const content = {
-                ...(finalText ? { text: finalText } : {}),
+                ...(finalCaption ? { text: finalCaption } : {}),
                 ...(mediaType === 'image' ? { image: mediaBuffer } : {}),
                 ...(mediaType === 'video' ? { video: mediaBuffer } : {}),
                 backgroundColor: '#1b2226',
