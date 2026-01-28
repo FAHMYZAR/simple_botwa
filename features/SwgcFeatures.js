@@ -7,28 +7,30 @@ const crypto = require('crypto');
 class GroupStatusFeature {
     constructor() {
         this.name = 'swgc';
-        this.description = '_Update status grup (Group Status V2)_';
+        this.description = '_Update SwGc_';
         this.ownerOnly = false;
     }
 
     async execute(m, sock, args) {
-        try {
-            const jid = m.key.remoteJid;
-            const isGroup = jid.endsWith('@g.us');
+    try {
+        args = Array.isArray(args) ? args : [];
 
-            if (!isGroup) {
-                await sock.sendMessage(jid, {
-                    text: '❌ Fitur ini hanya bisa digunakan di grup!'
-                });
-                return;
-            }
+        const jid = m.key.remoteJid;
+        const isGroup = jid.endsWith('@g.us');
 
-            if (!args.length) {
-                await sock.sendMessage(jid, {
-                    text: '❌ Masukkan teks status grup!'
-                });
-                return;
-            }
+        if (!isGroup) {
+            await sock.sendMessage(jid, {
+                text: '❌ Fitur ini hanya bisa digunakan di grup!'
+            });
+            return;
+        }
+
+        if (args.length === 0) {
+            await sock.sendMessage(jid, {
+                text: '❌ Masukkan teks status grup!'
+            });
+            return;
+        }
 
             await sock.sendMessage(jid, {
                 react: { text: '⏳', key: m.key }
