@@ -1,13 +1,14 @@
 const {
     generateWAMessageContent,
     generateWAMessageFromContent,
+    downloadMediaMessage,
 } = require('@whiskeysockets/baileys');
 const crypto = require('crypto');
 
 class GroupStatusFeature {
     constructor() {
         this.name = 'swgc';
-        this.description = '_Update status grup (Group Status V2)_';
+        this.description = '_Update SwGc_';
         this.ownerOnly = false;
     }
 
@@ -22,21 +23,86 @@ class GroupStatusFeature {
                 return;
             }
 
-            // 🔹 Ambil teks mentah pesan
+            // ===============================
+            // Ambil message utama
+            // ===============================
+            const msg = m.message;
             const body =
-                m.message.conversation ||
-                m.message.extendedTextMessage?.text ||
+                msg.conversation ||
+                msg.extendedTextMessage?.text ||
+                msg.imageMessage?.caption ||
+                msg.videoMessage?.caption ||
                 '';
 
-            // 🔹 Parse command & args sendiri
-            // contoh: ".swgc Halo grup"
-            const parts = body.trim().split(/\s+/);
-            parts.shift(); // buang "swgc"
-            const text = parts.join(' ').trim();
+            // ===============================
+            // Ambil quoted message (jika ada)
+            // ===============================
+            const context = msg.extendedTextMessage?.contextInfo;
+            const quoted = context?.quotedMessage;
 
-            if (!text) {
+            let text = '';
+            let media = null;
+
+            // ===============================
+            // 1️⃣ Jika reply pesan
+            // ===============================
+            if (quoted) {
+                text =
+                    quoted.conversation ||
+                    quoted.extendedTextMessage?.text ||
+                    quoted.imageMessage?.caption ||
+                    quoted.videoMessage?.caption ||
+                    '';
+
+                if (quoted.imageMessage || quoted.videoMessage) {
+                    try {
+                        media = await downloadMediaMessage(
+                            { message: quoted },
+                            'buffer',
+                            {},
+                            { logger: console, reuploadRequest: sock.updateMediaMessage }
+                        );
+                    } catch (e) {
+                        console.error('[SWGC] Failed download quoted media:', e);
+                    }
+                }
+            }
+
+            // ===============================
+            // 2️⃣ Jika kirim media + .swgc
+            // ===============================
+            if (!media && (msg.imageMessage || msg.videoMessage)) {
+                try {
+                    media = await downloadMediaMessage(
+                        m,
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                } catch (e) {
+                    console.error('[SWGC] Failed download media:', e);
+                }
+            }
+
+            // ===============================
+            // 3️⃣ Parse teks dari command (.swgc ...)
+            // ===============================
+            if (body) {
+                const parts = body.trim().split(/\s+/);
+                if (parts[0].toLowerCase().includes('swgc')) {
+                    parts.shift();
+                    if (parts.length) {
+                        text = parts.join(' ');
+                    }
+                }
+            }
+
+            // ===============================
+            // Validasi akhir
+            // ===============================
+            if (!text && !media) {
                 await sock.sendMessage(jid, {
-                    text: '❌ Masukkan teks status grup!\nContoh: `.swgc Halo semua 👋`'
+                    text: '❌ Tidak ada konten.\nGunakan `.swgc teks`, reply pesan, atau kirim media.'
                 });
                 return;
             }
@@ -46,10 +112,15 @@ class GroupStatusFeature {
             });
 
             console.log('[SWGC] Group:', jid);
-            console.log('[SWGC] Text:', text);
+            console.log('[SWGC] Text:', text || '(no text)');
+            console.log('[SWGC] Media:', media ? 'YES' : 'NO');
 
+            // ===============================
+            // Build content
+            // ===============================
             const content = {
-                text,
+                ...(text ? { text } : {}),
+                ...(media ? { image: media } : {}),
                 backgroundColor: '#1b2226',
             };
 
@@ -60,7 +131,7 @@ class GroupStatusFeature {
 
             const messageSecret = crypto.randomBytes(32);
 
-            const msg = generateWAMessageFromContent(
+            const msgStatus = generateWAMessageFromContent(
                 jid,
                 {
                     messageContextInfo: { messageSecret },
@@ -74,8 +145,8 @@ class GroupStatusFeature {
                 {}
             );
 
-            await sock.relayMessage(jid, msg.message, {
-                messageId: msg.key.id,
+            await sock.relayMessage(jid, msgStatus.message, {
+                messageId: msgStatus.key.id,
             });
 
             await sock.sendMessage(jid, {
