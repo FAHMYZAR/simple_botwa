@@ -8,18 +8,15 @@ const crypto = require('crypto');
 class GroupStatusFeature {
     constructor() {
         this.name = 'swgc';
-        this.description = '_Update SwGc_';
+        this.description = '_Update Status Grup (media & caption fleksibel)_';
         this.ownerOnly = false;
     }
 
     async execute(m, sock) {
         try {
             const jid = m.key.remoteJid;
-
             if (!jid.endsWith('@g.us')) {
-                await sock.sendMessage(jid, {
-                    text: '❌ Fitur ini hanya bisa digunakan di grup!'
-                });
+                await sock.sendMessage(jid, { text: '❌ Fitur ini hanya untuk grup!' });
                 return;
             }
 
@@ -29,32 +26,35 @@ class GroupStatusFeature {
                 msg.extendedTextMessage?.text ||
                 msg.imageMessage?.caption ||
                 msg.videoMessage?.caption ||
-                msg.documentMessage?.caption ||
                 '';
 
             const context = msg.extendedTextMessage?.contextInfo;
             const quoted = context?.quotedMessage;
 
-            let text = '';
             let mediaBuffer = null;
-            let mediaType = null; // 'image' | 'video'
+            let mediaType = null; // image | video
+            let captionFromMedia = '';
+            let overrideCaption = '';
 
             // ===============================
-            // 1️⃣ Ambil dari quoted message
+            // 1️⃣ Parse caption override dari !swgc
+            // ===============================
+            if (body) {
+                const parts = body.trim().split(/\s+/);
+                if (parts[0].toLowerCase().includes('swgc')) {
+                    parts.shift();
+                    overrideCaption = parts.join(' ').trim(); // BISA KOSONG
+                }
+            }
+
+            // ===============================
+            // 2️⃣ PRIORITAS: reply media
             // ===============================
             const source = quoted || msg;
 
-            // ---- TEXT ----
-            text =
-                source.conversation ||
-                source.extendedTextMessage?.text ||
-                source.imageMessage?.caption ||
-                source.videoMessage?.caption ||
-                source.documentMessage?.caption ||
-                '';
-
             // ---- IMAGE ----
             if (source.imageMessage) {
+                captionFromMedia = source.imageMessage.caption || '';
                 mediaBuffer = await downloadMediaMessage(
                     { message: { imageMessage: source.imageMessage } },
                     'buffer',
@@ -66,6 +66,7 @@ class GroupStatusFeature {
 
             // ---- VIDEO PLAYER ----
             else if (source.videoMessage) {
+                captionFromMedia = source.videoMessage.caption || '';
                 mediaBuffer = await downloadMediaMessage(
                     { message: { videoMessage: source.videoMessage } },
                     'buffer',
@@ -76,43 +77,43 @@ class GroupStatusFeature {
             }
 
             // ---- DOCUMENT VIDEO ----
-            else if (source.documentMessage) {
-                const mimetype = source.documentMessage.mimetype || '';
-                if (mimetype.startsWith('video')) {
-                    mediaBuffer = await downloadMediaMessage(
-                        { message: { documentMessage: source.documentMessage } },
-                        'buffer',
-                        {},
-                        { logger: console, reuploadRequest: sock.updateMediaMessage }
-                    );
-                    mediaType = 'video'; // ⚠️ convert document → video
-                }
+            else if (source.documentMessage?.mimetype?.startsWith('video')) {
+                captionFromMedia = source.documentMessage.caption || '';
+                mediaBuffer = await downloadMediaMessage(
+                    { message: { documentMessage: source.documentMessage } },
+                    'buffer',
+                    {},
+                    { logger: console, reuploadRequest: sock.updateMediaMessage }
+                );
+                mediaType = 'video';
             }
 
             // ===============================
-            // 2️⃣ Parse teks dari command (.swgc ...)
+            // 3️⃣ Tentukan caption final
             // ===============================
-            if (body) {
-                const parts = body.trim().split(/\s+/);
-                if (parts[0].toLowerCase().includes('swgc')) {
-                    parts.shift();
-                    if (parts.length) {
-                        text = parts.join(' ');
-                    }
-                }
+            let finalText = '';
+
+            if (overrideCaption) {
+                // User eksplisit override
+                finalText = overrideCaption;
+            } else if (captionFromMedia) {
+                // Pakai caption lama
+                finalText = captionFromMedia;
+            } else if (!mediaBuffer && overrideCaption) {
+                finalText = overrideCaption;
             }
 
             // ===============================
-            // Validasi akhir
+            // 4️⃣ Kasus tanpa media sama sekali
             // ===============================
-            if (!text && !mediaBuffer) {
+            if (!mediaBuffer && !finalText) {
                 await sock.sendMessage(jid, {
                     text:
                         '❌ Tidak ada konten.\n\n' +
                         'Gunakan:\n' +
-                        '• `.swgc teks`\n' +
-                        '• reply pesan / media\n' +
-                        '• kirim video + `.swgc`'
+                        '• `!swgc teks`\n' +
+                        '• reply media\n' +
+                        '• reply media + `!swgc caption baru`'
                 });
                 return;
             }
@@ -123,15 +124,15 @@ class GroupStatusFeature {
 
             console.log('[SWGC]', {
                 group: jid,
-                text: text || '(no text)',
-                mediaType: mediaType || 'none',
+                media: mediaType || 'none',
+                caption: finalText || '(none)',
             });
 
             // ===============================
-            // Build WA Status Content
+            // 5️⃣ Build status content
             // ===============================
             const content = {
-                ...(text ? { text } : {}),
+                ...(finalText ? { text: finalText } : {}),
                 ...(mediaType === 'image' ? { image: mediaBuffer } : {}),
                 ...(mediaType === 'video' ? { video: mediaBuffer } : {}),
                 backgroundColor: '#1b2226',
@@ -166,8 +167,8 @@ class GroupStatusFeature {
                 react: { text: '✅', key: m.key }
             });
 
-        } catch (error) {
-            console.error('[SWGC] Error:', error);
+        } catch (err) {
+            console.error('[SWGC] Error:', err);
             await sock.sendMessage(m.key.remoteJid, {
                 text: '❌ Gagal mengupdate status grup!'
             });
