@@ -8,7 +8,7 @@ const crypto = require('crypto');
 class GroupStatusFeature {
     constructor() {
         this.name = 'swgc';
-        this.description = '_Update Status Grup (simple & stabil)_';
+        this.description = '_Update SwGc_';
         this.ownerOnly = false;
     }
 
