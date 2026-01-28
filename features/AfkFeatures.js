@@ -4,11 +4,11 @@ let afkState = {
     since: 0
 };
 
-class AfkFeatures {
+class AfkFeature {
     constructor() {
         this.name = 'afk';
         this.description = '_Auto Reply_';
-        this.ownerOnly = false;
+        this.ownerOnly = true;
     }
 
     async execute(m, sock) {
@@ -93,4 +93,4 @@ Pesan ini dikirim otomatis oleh sistem AFK`
     }
 }
 
-module.exports = AfkFeatures;
+module.exports = AfkFeature;
