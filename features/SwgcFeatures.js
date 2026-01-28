@@ -7,39 +7,45 @@ const crypto = require('crypto');
 class GroupStatusFeature {
     constructor() {
         this.name = 'swgc';
-        this.description = '_Update SwGc_';
+        this.description = '_Update status grup (Group Status V2)_';
         this.ownerOnly = false;
     }
 
-    async execute(m, sock, args) {
-    try {
-        args = Array.isArray(args) ? args : [];
+    async execute(m, sock) {
+        try {
+            const jid = m.key.remoteJid;
 
-        const jid = m.key.remoteJid;
-        const isGroup = jid.endsWith('@g.us');
+            if (!jid.endsWith('@g.us')) {
+                await sock.sendMessage(jid, {
+                    text: '❌ Fitur ini hanya bisa digunakan di grup!'
+                });
+                return;
+            }
 
-        if (!isGroup) {
-            await sock.sendMessage(jid, {
-                text: '❌ Fitur ini hanya bisa digunakan di grup!'
-            });
-            return;
-        }
+            // 🔹 Ambil teks mentah pesan
+            const body =
+                m.message.conversation ||
+                m.message.extendedTextMessage?.text ||
+                '';
 
-        if (args.length === 0) {
-            await sock.sendMessage(jid, {
-                text: '❌ Masukkan teks status grup!'
-            });
-            return;
-        }
+            // 🔹 Parse command & args sendiri
+            // contoh: ".swgc Halo grup"
+            const parts = body.trim().split(/\s+/);
+            parts.shift(); // buang "swgc"
+            const text = parts.join(' ').trim();
+
+            if (!text) {
+                await sock.sendMessage(jid, {
+                    text: '❌ Masukkan teks status grup!\nContoh: `.swgc Halo semua 👋`'
+                });
+                return;
+            }
 
             await sock.sendMessage(jid, {
                 react: { text: '⏳', key: m.key }
             });
 
-            const text = args.join(' ');
-
-            console.log('[SWGC] ===== DEBUG INFO =====');
-            console.log('[SWGC] Group JID:', jid);
+            console.log('[SWGC] Group:', jid);
             console.log('[SWGC] Text:', text);
 
             const content = {
@@ -47,7 +53,6 @@ class GroupStatusFeature {
                 backgroundColor: '#1b2226',
             };
 
-            // Generate message content
             const inside = await generateWAMessageContent(content, {
                 upload: sock.waUploadToServer,
                 backgroundColor: content.backgroundColor,
