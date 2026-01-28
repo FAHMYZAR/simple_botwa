@@ -4,7 +4,7 @@ let afkState = {
     since: 0
 };
 
-class AfkFeature {
+class AfkFeatures {
     constructor() {
         this.name = 'afk';
         this.description = '_Auto Reply_';
@@ -93,4 +93,4 @@ Pesan ini dikirim otomatis oleh sistem AFK`
     }
 }
 
-module.exports = AfkFeature;
+module.exports = AfkFeatures;
