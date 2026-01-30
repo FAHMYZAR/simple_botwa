@@ -1,6 +1,8 @@
 const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 const { createCanvas, loadImage } = require('canvas');
 const sharp = require('sharp');
+const Formatter = require('../utils/Formatter');
+const AppError = require('../utils/AppError');
 
 class SmemeFeature {
     constructor() {
@@ -9,79 +11,63 @@ class SmemeFeature {
         this.ownerOnly = false;
     }
 
-    async execute(m, sock) {
-        try {
-            // Manual args extraction
-            const messageText = m.message?.conversation || m.message?.extendedTextMessage?.text || '';
-            const args = messageText.trim().split(/\s+/).slice(1);
+    async execute(m, sock, parsed) {
+        // Manual args extraction bypassed, using parsed
+        let argText = parsed.argText;
 
-            const quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+        const quoted = parsed.quoted;
 
-            if (!quoted || (!quoted.imageMessage && !quoted.stickerMessage)) {
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: '❌ Reply gambar/sticker dengan teks!\n\nContoh: .smeme teks atas|teks bawah'
-                });
-                return;
-            }
-
-            if (!args.length) {
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: '❌ Masukkan teks!\n\nContoh: .smeme teks atas|teks bawah\nAtau: .smeme teks atas'
-                });
-                return;
-            }
-
-            await sock.sendMessage(m.key.remoteJid, { react: { text: '⏳', key: m.key } });
-
-            // Download media
-            let buffer;
-            if (quoted.imageMessage) {
-                buffer = await downloadMediaMessage(
-                    { message: { imageMessage: quoted.imageMessage } },
-                    'buffer',
-                    {},
-                    { logger: console, reuploadRequest: sock.updateMediaMessage }
-                );
-            } else if (quoted.stickerMessage) {
-                const stickerBuffer = await downloadMediaMessage(
-                    { message: { stickerMessage: quoted.stickerMessage } },
-                    'buffer',
-                    {},
-                    { logger: console, reuploadRequest: sock.updateMediaMessage }
-                );
-                // Convert WebP sticker to PNG
-                buffer = await sharp(stickerBuffer).png().toBuffer();
-            }
-
-            // Parse text
-            const text = args.join(' ');
-            const [topText, bottomText] = text.includes('|') ? text.split('|') : [text, ''];
-
-            // Create meme
-            const memeBuffer = await this.createMeme(buffer, topText.trim(), bottomText.trim());
-
-            // Convert to sticker
-            const stickerBuffer = await sharp(memeBuffer)
-                .resize(512, 512, {
-                    fit: 'contain',
-                    background: { r: 0, g: 0, b: 0, alpha: 0 }
-                })
-                .webp({ quality: 95 })
-                .toBuffer();
-
-            // Hapus react sebelum kirim sticker
-            await sock.sendMessage(m.key.remoteJid, {
-                react: { text: '', key: m.key }
-            });
-
-            await sock.sendMessage(m.key.remoteJid, { sticker: stickerBuffer }, { quoted: m });
-
-        } catch (error) {
-            console.error('Smeme error:', error);
-            await sock.sendMessage(m.key.remoteJid, {
-                text: '❌ Gagal membuat meme!'
-            });
+        if (!quoted || (!quoted.imageMessage && !quoted.stickerMessage)) {
+            throw new AppError(`Reply gambar/sticker dengan teks!\n\nContoh: ${Formatter.code('.smeme teks atas|teks bawah')}`);
         }
+
+        if (!argText) {
+            throw new AppError(`Masukkan teks!\n\nContoh: ${Formatter.code('.smeme teks atas|teks bawah')}\nAtau: ${Formatter.code('.smeme teks atas')}`);
+        }
+
+        await sock.sendMessage(parsed.remoteJid, { react: { text: '⏳', key: m.key } });
+
+        // Download media
+        let buffer;
+        if (quoted.imageMessage) {
+            buffer = await downloadMediaMessage(
+                { message: { imageMessage: quoted.imageMessage } },
+                'buffer',
+                {},
+                { logger: console, reuploadRequest: sock.updateMediaMessage }
+            );
+        } else if (quoted.stickerMessage) {
+            const stickerBuffer = await downloadMediaMessage(
+                { message: { stickerMessage: quoted.stickerMessage } },
+                'buffer',
+                {},
+                { logger: console, reuploadRequest: sock.updateMediaMessage }
+            );
+            // Convert WebP sticker to PNG
+            buffer = await sharp(stickerBuffer).png().toBuffer();
+        }
+
+        // Parse text
+        const [topText, bottomText] = argText.includes('|') ? argText.split('|') : [argText, ''];
+
+        // Create meme
+        const memeBuffer = await this.createMeme(buffer, topText.trim(), bottomText.trim());
+
+        // Convert to sticker
+        const stickerBuffer = await sharp(memeBuffer)
+            .resize(512, 512, {
+                fit: 'contain',
+                background: { r: 0, g: 0, b: 0, alpha: 0 }
+            })
+            .webp({ quality: 95 })
+            .toBuffer();
+
+        // Hapus react sebelum kirim sticker
+        await sock.sendMessage(parsed.remoteJid, {
+            react: { text: '', key: m.key }
+        });
+
+        await sock.sendMessage(parsed.remoteJid, { sticker: stickerBuffer }, { quoted: m });
     }
 
     async createMeme(imageBuffer, topText, bottomText) {

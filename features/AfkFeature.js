@@ -1,82 +1,34 @@
-let afkState = {
-    isAfk: false,
-    reason: '',
-    since: 0
-};
+const AfkService = require('../services/AfkService');
+const Formatter = require('../utils/Formatter');
 
 class AfkFeature {
-    constructor() {
-        this.name = 'afk';
-        this.description = '_Mode AFK_';
-        this.ownerOnly = true;
-    }
+  constructor() {
+    this.name = 'afk';
+    this.description = '_Set bot status AFK_';
+    this.ownerOnly = true; // Only owner can set bot AFK
+    this.afkService = new AfkService();
+  }
 
-    async execute(m, sock) {
-        const jid = m.key.remoteJid;
-
-        const body =
-            m.message?.conversation ||
-            m.message?.extendedTextMessage?.text ||
-            '';
-
-        // ===============================
-        // PARSE COMMAND
-        // ===============================
-        const args = body.trim().split(/\s+/).slice(1);
-        const sub = args.join(' ').trim();
-
-        // ===============================
-        // NONAKTIFKAN AFK
-        // ===============================
-        if (sub.toLowerCase() === 'off') {
-            if (!afkState.isAfk) {
-                return sock.sendMessage(jid, {
-                    text: 'ℹ️ AFK sudah tidak aktif.'
-                });
-            }
-
-            afkState.isAfk = false;
-
-            const durMs = Date.now() - afkState.since;
-            const menit = Math.max(1, Math.floor(durMs / 60000));
-
-            return sock.sendMessage(jid, {
-                text:
-`👋 *AFK Dinonaktifkan*
-
-Selamat datang kembali!
-Kamu AFK selama ± ${menit} menit.
-
-Siap online lagi 🚀`
-            });
-        }
-
-        // ===============================
-        // AKTIFKAN AFK
-        // ===============================
-        afkState = {
-            isAfk: true,
-            reason: sub || 'Lagi offline sebentar',
-            since: Date.now()
-        };
-
-        return sock.sendMessage(jid, {
-            text:
-`✅ *AFK Aktif*
-
-Halo semuanya 🙌  
-Saat ini *Fahmy* sedang **offline (AFK)**.
-
-📝 Alasan:
-➜ ${afkState.reason}
-
-Mohon ditunggu ya,
-nanti kalau sudah online pasti dibalas 🙏
-
-—
-Pesan ini diatur manual via AFK System`
-        });
-    }
+  async execute(m, sock, parsed) {
+    const reason = parsed.argText.trim() || 'Sedang AFK';
+    
+    // Set AFK
+    this.afkService.setAfk(reason);
+    
+    // Send confirmation
+    const message = [
+      Formatter.bold('fahmy mulai tidak aktif (AFK)'),
+      `Alasan: ${reason}`,
+      '',
+      Formatter.italic('Kirim &stop untuk mematikan status AFK.')
+    ].join('\n');
+    
+    await sock.sendMessage(
+      parsed.remoteJid,
+      { text: message },
+      { quoted: m }
+    );
+  }
 }
 
 module.exports = AfkFeature;

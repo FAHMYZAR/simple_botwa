@@ -22,25 +22,20 @@ const qrcode = require('qrcode-terminal');
 const pino = require('pino');
 const config = require('./config/config');
 const Helper = require('./utils/helper');
+const StoreService = require('./services/StoreService');
+const MessageParser = require('./utils/MessageParser');
+const RateLimitService = require('./services/RateLimitService');
+const AfkService = require('./services/AfkService');
+const Formatter = require('./utils/Formatter');
+const AppError = require('./utils/AppError');
 
-// Store contacts
-const store = { contacts: {} };
+// Initialize Store Service
+const storeService = new StoreService();
+// Initialize Rate Limit Service (max 5 commands per minute per user)
+const rateLimitService = new RateLimitService(60000, 5);
+// Initialize AFK Service
+const afkService = new AfkService();
 
-// Load store
-if (fs.existsSync('./baileys_store.json')) {
-  try {
-    const data = JSON.parse(fs.readFileSync('./baileys_store.json', 'utf-8'));
-    store.contacts = data.contacts || {};
-    console.log('[STORE] Loaded', Object.keys(store.contacts).length, 'contacts');
-  } catch (e) {
-    console.log('Failed to load store');
-  }
-}
-
-// Save store every 10 seconds
-setInterval(() => {
-  fs.writeFileSync('./baileys_store.json', JSON.stringify(store, null, 2));
-}, 10_000);
 
 // Cleanup temp folder every minute
 setInterval(() => {
@@ -62,7 +57,7 @@ async function connectToWhatsApp() {
       creds: state.creds,
       keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
     },
-    browser: ['Artifical Intelegent (fahmyzzx)', 'Chrome', '3.0'],
+    browser: ['Artifical Intelegent (fahmyzzx) v1', 'Chrome', '3.0'],
     markOnlineOnConnect: true
   });
 
@@ -88,53 +83,121 @@ async function connectToWhatsApp() {
   sock.ev.on('creds.update', saveCreds);
 
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
-    try {
       if (type !== 'notify') return;
-
       const m = messages[0];
-      if (!m.message) return;
+      if (!m || !m.message) return;
 
-      const messageText = m.message.conversation ||
-        m.message.extendedTextMessage?.text || '';
-      const body = messageText.trim();
+    try {
+
+      // 1. Parse Message
+      const parsed = MessageParser.parse(m, sock);
+      const { 
+        body, 
+        command, 
+        isCmd, 
+        sender, 
+        pushName, 
+        isGroup, 
+        remoteJid 
+      } = parsed;
+
+      // 2. Save Contacts
+      if (sender && pushName) {
+        storeService.addContact(sender, pushName);
+      }
+
+      // 3. Check Owner & Permissions (MOVED UP)
       const isFromMe = m.key.fromMe;
-      const sender = m.key.participant || m.key.remoteJid;
+      // Fix owner checking - handle both @s.whatsapp.net and @lid formats
+      const normalizedSender = sender.replace('@s.whatsapp.net', '').replace('@lid', '');
+      const isOwner = isFromMe || normalizedSender === config.ownerNumber;
 
-      // Save contacts
-      if (!isFromMe && sender && m.pushName) {
-        if (!store.contacts[sender] || store.contacts[sender].name !== m.pushName) {
-          store.contacts[sender] = { id: sender, name: m.pushName };
-          console.log('[STORE] Saved contact:', sender, '→', m.pushName);
+      // 4. Check AFK Status (Bot-Level) - Skip if owner
+      if (!isOwner && afkService.isAfkActive()) {
+        // Determine if user is interacting with bot
+        const botJid = sock.user?.id;
+        const isMentioned = botJid && parsed.mentions.includes(botJid);
+        const isReplyToBot = parsed.quotedSender === botJid;
+        const isPrivateChat = !parsed.isGroup;
+        
+        // If user interacts with bot (mention/reply/DM)
+        if (isMentioned || isReplyToBot || isPrivateChat) {
+          const afkInfo = afkService.getAfkInfo();
+          const afkMessage = [
+            Formatter.bold('fahmy sedang tidak aktif'),
+            `Alasan: ${afkInfo.reason}`,
+            `Durasi: ${afkInfo.duration}`,
+            '',
+            Formatter.italic('(Abaikan) Pesan ini otomatis karena fahmy sedang Tidak aktif.')
+          ].join('\n');
+          
+          await sock.sendMessage(
+            parsed.remoteJid,
+            { text: afkMessage },
+            { quoted: m }
+          );
+          // Always return early - don't process commands while AFK
+          return;
         }
       }
 
-      // Check if owner
-      const isOwner = isFromMe || sender.replace('@s.whatsapp.net', '') === config.ownerNumber;
+      // 5. Log Command
+      if (isCmd) {
+        console.log(`[CMD] ${command} from ${pushName} (${sender.split('@')[0]})`);
+      } else {
+        // If not a command, ignore (unless we want to handle non-command messages later)
+        return;
+      }
 
-      // Handle commands
+      // Feature Check
+      const feature = features.get(command);
+      if (!feature) return;
+
+      // 6. Rate Limiting Check
+      // Only check for non-owner and valid commands
+      if (!isOwner) {
+        if (!rateLimitService.check(sender)) {
+          console.warn(`[RATE LIMIT] ${sender} exceeded limit.`);
+          // Optional: Send warning message (once per window ideally, but simple here)
+          // await sock.sendMessage(remoteJid, { text: '⏳ Terlalu banyak request! Tunggu sebentar.' }, { quoted: m });
+          return;
+        }
+      }
+
+      // 7. Feature Handling
       // Feature Mode Check
+      // Re-read settings every time? Okay but maybe cache later.
       const settings = JSON.parse(fs.readFileSync('./settings.json', 'utf-8'));
 
-      if (body.startsWith(config.ownerPrefix) && isOwner) {
-        const command = body.slice(1).split(' ')[0].toLowerCase();
-        const feature = features.get(command);
-        if (feature && feature.ownerOnly) {
-          await feature.execute(m, sock);
-        }
-      } else if (body.startsWith(config.userPrefix)) {
-        if (settings.mode === 'private' && !isOwner) {
-          return; // Ignore if private mode and not owner
-        }
-
-        const command = body.slice(1).split(' ')[0].toLowerCase();
-        const feature = features.get(command);
-        if (feature && !feature.ownerOnly) {
-          await feature.execute(m, sock);
-        }
+      // Permission Check
+      if (feature.ownerOnly && !isOwner) {
+        return; // Silent fail if not owner
       }
 
+      // Mode Check
+      if (settings.mode === 'private' && !isOwner && !feature.ownerOnly) {
+        return; // Ignore in private mode
+      }
+
+      // Execute Feature with Parsed Data
+      await feature.execute(m, sock, parsed);
+
     } catch (error) {
-      console.error('Message Handler Error:', error.message);
+      if (error instanceof AppError) {
+        // Operational error (User input error, etc) - Send standard warning
+        // We use the parsed remoteJid if available, otherwise fallback to message key
+        const jid = m?.key?.remoteJid;
+        if (jid) {
+            await sock.sendMessage(jid, { 
+                text: `${Formatter.bold('❌ Error:')} ${error.message}` 
+            }, { quoted: m });
+        }
+      } else {
+        // Programming or System error - Log and obscure details
+        console.error('[UNHANDLED FAILURE]', error);
+        // Optional: Send generic message for unknown errors
+        // await sock.sendMessage(m.key.remoteJid, { text: '❌ Terjadi kesalahan internal.' });
+      }
     }
   });
 }

@@ -4,6 +4,8 @@ const path = require('path');
 const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
+const Formatter = require('../utils/Formatter');
+const AppError = require('../utils/AppError');
 
 class HdFeature {
     constructor() {
@@ -12,116 +14,97 @@ class HdFeature {
         this.ownerOnly = false;
     }
 
-    async execute(m, sock) {
+    async execute(m, sock, parsed) {
+        // Extract args from parsed
+        const customCaption = parsed.argText;
+
+        const quoted = parsed.quoted;
+        const documentMessage = m.message?.documentMessage || quoted?.documentMessage;
+
+        if (!documentMessage) {
+            throw new AppError(`Reply document video dengan ${Formatter.code('.hdsw [caption]')} untuk convert ke media player HD!`);
+        }
+
+        // Cek apakah document adalah video
+        const mimetype = documentMessage.mimetype || '';
+        if (!mimetype.includes('video')) {
+            throw new AppError('Document harus berupa video!');
+        }
+
+        // Cek ukuran file (max 250MB)
+        const fileSize = documentMessage.fileLength || 0;
+        const sizeInMB = fileSize / (1024 * 1024);
+
+        if (sizeInMB > 250) {
+            throw new AppError(`Video terlalu besar! (${sizeInMB.toFixed(2)} MB)\nMaksimal 250 MB.`);
+        }
+
+        const estimatedTime = Math.ceil(sizeInMB * 2.5);
+        const progressMsg = await sock.sendMessage(parsed.remoteJid, {
+            text: `${Formatter.bold('⏳ Processing video HD...')}\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Estimasi: ~${estimatedTime}s\n📊 Progress: [░░░░░░░░░░] 0%`
+        });
+
+        // Update progress: Downloading
+        await sock.sendMessage(parsed.remoteJid, {
+            text: `${Formatter.bold('⏳ Downloading video...')}\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Estimasi: ~${estimatedTime}s\n📊 Progress: [██░░░░░░░░] 20%`,
+            edit: progressMsg.key
+        });
+
+        // Download document
+        const buffer = await downloadMediaMessage(
+            { message: { documentMessage } },
+            'buffer',
+            {},
+            { logger: console, reuploadRequest: sock.updateMediaMessage }
+        );
+
+        if (!buffer) {
+            throw new AppError('Gagal download video!');
+        }
+
+        // Corrected path to temp directory
+        const tempDir = path.join(__dirname, '../temp');
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+        }
+
+        const inputFile = path.join(tempDir, `hd_input_${Date.now()}.mp4`);
+        const outputFile = path.join(tempDir, `hd_output_${Date.now()}.mp4`);
+        fs.writeFileSync(inputFile, buffer);
+
+        // Update progress: Analyzing
+        await sock.sendMessage(parsed.remoteJid, {
+            text: `${Formatter.bold('⏳ Analyzing video...')}\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Estimasi: ~${estimatedTime}s\n📊 Progress: [████░░░░░░] 40%`,
+            edit: progressMsg.key
+        });
+
+        // Path to local FFmpeg binaries
+        const binDir = path.join(__dirname, '../bin');
+        const ffmpegPath = path.join(binDir, 'ffmpeg');
+        const ffprobePath = path.join(binDir, 'ffprobe');
+
+        // Detect video properties
+        const probeCmd = `"${ffprobePath}" -v error -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate,bit_rate -of json "${inputFile}"`;
+        let fps = 30; // Default fps if detection fails
+
         try {
-            // Extract args from message body
-            const messageText = m.message?.conversation || m.message?.extendedTextMessage?.text || '';
-            const args = messageText.trim().split(/\s+/).slice(1);
+            const { stdout: probeOutput } = await execPromise(probeCmd);
+            const videoInfo = JSON.parse(probeOutput);
+            const stream = videoInfo.streams?.[0];
 
-            const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
-            const documentMessage = m.message?.documentMessage || quoted?.documentMessage;
-
-            if (!documentMessage) {
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: '❌ Reply document video dengan .hdsw [caption] untuk convert ke media player HD!'
-                });
-                return;
-            }
-
-            // Get custom caption dari args
-            const customCaption = args.join(' ').trim();
-
-            // Cek apakah document adalah video
-            const mimetype = documentMessage.mimetype || '';
-            if (!mimetype.includes('video')) {
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: '❌ Document harus berupa video!'
-                });
-                return;
-            }
-
-            // Cek ukuran file (max 250MB)
-            const fileSize = documentMessage.fileLength || 0;
-            const sizeInMB = fileSize / (1024 * 1024);
-
-            if (sizeInMB > 250) {
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: `❌ Video terlalu besar! (${sizeInMB.toFixed(2)} MB)\nMaksimal 250 MB.`
-                });
-                return;
-            }
-
-            const estimatedTime = Math.ceil(sizeInMB * 2.5);
-            const progressMsg = await sock.sendMessage(m.key.remoteJid, {
-                text: `⏳ Processing video HD...\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Estimasi: ~${estimatedTime}s\n📊 Progress: [░░░░░░░░░░] 0%`
-            });
-
-            // Update progress: Downloading
-            await sock.sendMessage(m.key.remoteJid, {
-                text: `⏳ Downloading video...\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Estimasi: ~${estimatedTime}s\n📊 Progress: [██░░░░░░░░] 20%`,
-                edit: progressMsg.key
-            });
-
-            // Download document
-            const buffer = await downloadMediaMessage(
-                { message: { documentMessage } },
-                'buffer',
-                {},
-                { logger: console, reuploadRequest: sock.updateMediaMessage }
-            );
-
-            if (!buffer) {
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: '❌ Gagal download video!'
-                });
-                return;
-            }
-
-            // Corrected path to temp directory
-            const tempDir = path.join(__dirname, '../temp');
-            if (!fs.existsSync(tempDir)) {
-                fs.mkdirSync(tempDir, { recursive: true });
-            }
-
-            const inputFile = path.join(tempDir, `hd_input_${Date.now()}.mp4`);
-            const outputFile = path.join(tempDir, `hd_output_${Date.now()}.mp4`);
-            fs.writeFileSync(inputFile, buffer);
-
-            // Update progress: Analyzing
-            await sock.sendMessage(m.key.remoteJid, {
-                text: `⏳ Analyzing video...\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Estimasi: ~${estimatedTime}s\n📊 Progress: [████░░░░░░] 40%`,
-                edit: progressMsg.key
-            });
-
-            // Path to local FFmpeg binaries
-            const binDir = path.join(__dirname, '../bin');
-            const ffmpegPath = path.join(binDir, 'ffmpeg');
-            const ffprobePath = path.join(binDir, 'ffprobe');
-
-            // Detect video properties
-            const probeCmd = `"${ffprobePath}" -v error -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate,bit_rate -of json "${inputFile}"`;
-            let fps = 30; // Default fps if detection fails
-
-            try {
-                const { stdout: probeOutput } = await execPromise(probeCmd);
-                const videoInfo = JSON.parse(probeOutput);
-                const stream = videoInfo.streams?.[0];
-
-                if (stream) {
-                    if (stream.r_frame_rate) {
-                        const fpsRatio = stream.r_frame_rate.split('/');
-                        const originalFps = Math.round(parseInt(fpsRatio[0]) / parseInt(fpsRatio[1]));
-                        fps = Math.min(originalFps, 60); // Max 60fps
-                    }
+            if (stream) {
+                if (stream.r_frame_rate) {
+                    const fpsRatio = stream.r_frame_rate.split('/');
+                    const originalFps = Math.round(parseInt(fpsRatio[0]) / parseInt(fpsRatio[1]));
+                    fps = Math.min(originalFps, 60); // Max 60fps
                 }
-            } catch (e) {
-                console.error('Probe error, defaulting to 30fps', e);
             }
+        } catch (e) {
+            console.error('Probe error, defaulting to 30fps', e);
+        }
 
-            // Optimized HD Compression using local FFmpeg
-            // Switch to libx264 since static build supports it and handle HEVC decoding natively.
-
-            const ffmpegCmd = `"${ffmpegPath}" -i "${inputFile}" \
+        // Optimized HD Compression using local FFmpeg
+        const ffmpegCmd = `"${ffmpegPath}" -i "${inputFile}" \
                 -c:v libx264 \
                 -preset veryfast \
                 -crf 23 \
@@ -137,22 +120,23 @@ class HdFeature {
                 -max_muxing_queue_size 9999 \
                 -y "${outputFile}"`;
 
-            // Update progress: Compressing dengan animasi
-            const startTime = Date.now();
+        // Update progress: Compressing dengan animasi
+        const startTime = Date.now();
 
-            // Progress animation during FFmpeg processing
-            const progressInterval = setInterval(async () => {
-                const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
-                const progress = Math.min(95, 60 + Math.floor(elapsed / 2)); // 60% -> 95% gradually
-                const bars = Math.floor(progress / 10);
-                const progressBar = '█'.repeat(bars) + '░'.repeat(10 - bars);
+        // Progress animation during FFmpeg processing
+        const progressInterval = setInterval(async () => {
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
+            const progress = Math.min(95, 60 + Math.floor(elapsed / 2)); // 60% -> 95% gradually
+            const bars = Math.floor(progress / 10);
+            const progressBar = '█'.repeat(bars) + '░'.repeat(10 - bars);
 
-                await sock.sendMessage(m.key.remoteJid, {
-                    text: `⏳ Compressing video (Normalizing Codec)...\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Elapsed: ${elapsed}s\n📊 Progress: [${progressBar}] ${progress}%`,
-                    edit: progressMsg.key
-                }).catch(() => { });
-            }, 2000); // Update every 2 seconds
+            await sock.sendMessage(parsed.remoteJid, {
+                text: `⏳ Compressing video (Normalizing Codec)...\n\n📦 Size: ${sizeInMB.toFixed(2)} MB\n⏱️ Elapsed: ${elapsed}s\n📊 Progress: [${progressBar}] ${progress}%`,
+                edit: progressMsg.key
+            }).catch(() => { });
+        }, 2000); // Update every 2 seconds
 
+        try {
             await execPromise(ffmpegCmd);
             clearInterval(progressInterval);
 
@@ -189,15 +173,15 @@ class HdFeature {
             } catch (e) {
                 console.log('Cleanup error:', e.message);
             }
-
-        } catch (error) {
-            console.error('HD error:', error);
-
-            let errorMessage = '❌ Gagal memproses video! Pastikan ffmpeg terinstall di server.';
-
-            await sock.sendMessage(m.key.remoteJid, {
-                text: errorMessage
-            });
+        
+        } catch (ffmpegErr) {
+            clearInterval(progressInterval);
+            // Cleanup on error too
+            try {
+                if(fs.existsSync(inputFile)) fs.unlinkSync(inputFile);
+                if(fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
+            } catch {}
+            throw new Error('FFmpeg processing failed: ' + ffmpegErr.message);
         }
     }
 }

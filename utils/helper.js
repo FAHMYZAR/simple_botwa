@@ -1,8 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
 
 class Helper {
+  static async downloadMedia(message, type) {
+    const stream = await downloadContentFromMessage(message, type);
+    let buffer = Buffer.from([]);
+    for await (const chunk of stream) {
+      buffer = Buffer.concat([buffer, chunk]);
+    }
+    return buffer;
+  }
+
   static loadFeatures() {
     const features = new Map();
     const featuresDir = path.join(__dirname, '../features');

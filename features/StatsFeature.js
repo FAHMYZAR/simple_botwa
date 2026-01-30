@@ -6,6 +6,8 @@ const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
 const axios = require('axios');
+const Formatter = require('../utils/Formatter');
+const AppError = require('../utils/AppError');
 
 class StatsFeature {
     constructor() {
@@ -16,9 +18,8 @@ class StatsFeature {
         this.githubUrl = 'https://github.com/FAHMYZAR';
     }
 
-    async execute(m, sock) {
-        try {
-            await sock.sendMessage(m.key.remoteJid, { react: { text: '📊', key: m.key } });
+    async execute(m, sock, parsed) {
+            await sock.sendMessage(parsed.remoteJid, { react: { text: '📊', key: m.key } });
 
             // 1. Gather System Info
             const platform = os.platform();
@@ -94,32 +95,31 @@ class StatsFeature {
             }
 
             const body = [
-                '*Artifical Intelegent (fahmyzzx)*',
+                Formatter.bold('Artificial Intelligence (fahmyzzx)'),
                 'System Status & Statistics',
-                '',
-                '> *Environment*',
-                `› *Platform:* ${platform} (${arch})`,
-                `› *OS:* ${release}`,
-                `› *Host:* ${hostname}`,
-                `› *CPU:* ${cpuModel} (${cpus.length} Threads)`,
-                `› *Disk:* ${diskUsage}`,
-                `› *ISP:* ${ispName}`,
-                '',
-                '> *Bot Status*',
-                `› *Node JS:* ${process.version}`,
-                `› *Uptime:* ${uptime}`,
-                `› *Memory Used:* ${processMem}`,
-                `› *Total Memory:* ${totalMem} / ${freeMem}`,
-                `› *Contacts:* ${contactCount} Loaded`,
-                `› *Features:* ${featuresCount} Modules`,
-                '',
-                '> *Tech Stack*',
+                Formatter.section('Environment'),
+                `› ${Formatter.bold('Platform:')} ${platform} (${arch})`,
+                `› ${Formatter.bold('OS:')} ${release}`,
+                `› ${Formatter.bold('Host:')} ${hostname}`,
+                `› ${Formatter.bold('CPU:')} ${cpuModel} (${cpus.length} Threads)`,
+                `› ${Formatter.bold('Disk:')} ${diskUsage}`,
+                `› ${Formatter.bold('ISP:')} ${ispName}`,
+
+                Formatter.section('Bot Status'),
+                `› ${Formatter.bold('Node JS:')} ${process.version}`,
+                `› ${Formatter.bold('Uptime:')} ${uptime}`,
+                `› ${Formatter.bold('Memory Used:')} ${processMem}`,
+                `› ${Formatter.bold('Total Memory:')} ${totalMem} / ${freeMem}`,
+                `› ${Formatter.bold('Contacts:')} ${contactCount} Loaded`,
+                `› ${Formatter.bold('Features:')} ${featuresCount} Modules`,
+                
+                Formatter.section('Tech Stack'),
                 ...technologies.map(t => `› ${t}`),
             ].join('\n');
 
-            await sock.sendMessage(m.key.remoteJid, { react: { text: '', key: m.key } });
+            await sock.sendMessage(parsed.remoteJid, { react: { text: '', key: m.key } });
 
-            await sock.sendMessage(m.key.remoteJid, {
+            await sock.sendMessage(parsed.remoteJid, {
                 text: body,
                 contextInfo: {
                     externalAdReply: {
@@ -133,13 +133,6 @@ class StatsFeature {
                     }
                 }
             });
-
-        } catch (error) {
-            console.error('[STATS] error:', error);
-            await sock.sendMessage(m.key.remoteJid, {
-                text: '❌ Gagal mengambil statistik!'
-            });
-        }
     }
 
     formatUptime(seconds) {
