@@ -2057,3 +2057,192 @@ Require stack:
 [2026-01-30T16:42:01.706Z] INFO: [CMD] gem from fahmy (254348063957207)
 [2026-01-30T16:42:08.296Z] INFO: [CMD] gem from fahmy (254348063957207)
 [2026-01-30T16:42:47.089Z] INFO: [STORE] Updated contact: 207786742960250@lid → wildan
+[2026-01-31T03:47:33.478Z] INFO: [dotenv@17.2.3] injecting env (6) from .env [2m-- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops[0m
+[2026-01-31T03:47:33.487Z] INFO: [STORE] Loaded 27 contacts
+[2026-01-31T03:47:33.957Z] INFO: 📦 Loaded 14 features
+[2026-01-31T03:47:34.226Z] INFO: Emoji cache initialized for apple
+[2026-01-31T03:47:34.228Z] INFO: Preloading 20 popular emojis...
+[2026-01-31T03:47:35.139Z] INFO: Preloaded 5/20 popular emojis
+[2026-01-31T03:47:37.980Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-01-31T03:47:37.981Z] INFO: 👑 Owner: 6285226166485
+[2026-01-31T03:49:55.111Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-01-31T03:49:55.111Z] INFO: [CMD] ping from fahmy (628895437448)
+[2026-01-31T03:49:55.118Z] INFO: [CMD] ping from fahmy (628895437448)
+[2026-01-31T03:49:55.122Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-01-31T03:49:55.126Z] INFO: [STORE] Updated contact: 6285772365742@s.whatsapp.net → fahmy
+[2026-01-31T03:49:55.137Z] INFO: [STORE] Updated contact: 206356468506629@lid → Freds
+[2026-01-31T03:50:01.841Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-01-31T03:50:01.841Z] INFO: [CMD] ping from fahmy (628895437448)
+[2026-01-31T03:52:40.906Z] INFO: [CMD] stats from fahmy (628895437448)
+[2026-01-31T03:52:54.158Z] INFO: [STORE] Updated contact: 62895327106634@s.whatsapp.net → Pluto
+[2026-01-31T03:55:18.999Z] INFO: [dotenv@17.2.3] injecting env (6) from .env [2m-- tip: ⚙️  suppress all logs with { quiet: true }[0m
+[2026-01-31T03:55:19.008Z] INFO: [STORE] Loaded 30 contacts
+[2026-01-31T03:55:19.373Z] INFO: 📦 Loaded 14 features
+[2026-01-31T03:55:19.576Z] INFO: Emoji cache initialized for apple
+[2026-01-31T03:55:19.577Z] INFO: Preloading 20 popular emojis...
+[2026-01-31T03:55:20.496Z] INFO: Preloaded 5/20 popular emojis
+[2026-01-31T03:55:28.013Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-01-31T03:55:28.013Z] INFO: 👑 Owner: 6285226166485
+[2026-01-31T03:56:40.777Z] INFO: [STORE] Updated contact: 102293823332537@lid → ‎ ▶︎ •၊၊||၊|။||||။၊|•
+[2026-01-31T03:56:57.104Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T03:59:18.518Z] INFO: [dotenv@17.2.3] injecting env (6) from .env [2m-- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild[0m
+[2026-01-31T03:59:18.524Z] INFO: [STORE] Loaded 31 contacts
+[2026-01-31T03:59:18.895Z] INFO: 📦 Loaded 14 features
+[2026-01-31T03:59:19.100Z] INFO: Emoji cache initialized for apple
+[2026-01-31T03:59:19.101Z] INFO: Preloading 20 popular emojis...
+[2026-01-31T03:59:20.024Z] INFO: Preloaded 5/20 popular emojis
+[2026-01-31T03:59:24.048Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-01-31T03:59:24.049Z] INFO: 👑 Owner: 6285226166485
+[2026-01-31T04:00:11.122Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:00:11.123Z] INFO: --- [DEBUG SWGC] ---
+[2026-01-31T04:00:11.129Z] INFO: Current Message: {
+  "extendedTextMessage": {
+    "text": "&swgc",
+    "contextInfo": {
+      "stanzaId": "3A516CCEB60BE7F3980B",
+      "participant": "257655222313007@lid",
+      "quotedMessage": {
+        "imageMessage": {
+          "url": "https://mmg.whatsapp.net/o1/v/t24/f2/m232/AQNcBL1U7R3BWdBMFMKLd4UXdxbDT8Dh7cN9x0WutNnfP_VjKSdMq_DMjjbk5tnR35Ai3N3XjwkIo9U60HRDi-DCqWuAfT5ABMvwgxI8zQ?ccb=9-4&oh=01_Q5Aa3gHLBuPZ3IbMncQ9rz7qb6hIzBPZ0m1yTR-YMIxP6pIUBQ&oe=69A4F04E&_nc_sid=e6ed6c&mms3=true",
+          "mimetype": "image/jpeg",
+          "caption": "kacamata",
+          "fileSha256": "+5ZNMv2scbjQ2et2S7bWMzr4ng7sukEqZHYi+ssJsCk=",
+          "fileLength": "134593",
+          "height": 1600,
+          "width": 1200,
+          "mediaKey": "IZfdCiS8XuAjJtgBYivXAeWcGjUo5lri1xWvp5qPLSg=",
+          "fileEncSha256": "R2C7iEGrtPKFi/4soOmHoCdxN4BfG00FHjUZ2921uMQ=",
+          "directPath": "/o1/v/t24/f2/m232/AQNcBL1U7R3BWdBMFMKLd4UXdxbDT8Dh7cN9x0WutNnfP_VjKSdMq_DMjjbk5tnR35Ai3N3XjwkIo9U60HRDi-DCqWuAfT5ABMvwgxI8zQ?ccb=9-4&oh=01_Q5Aa3gHLBuPZ3IbMncQ9rz7qb6hIzBPZ0m1yTR-YMIxP6pIUBQ&oe=69A4F04E&_nc_sid=e6ed6c",
+          "mediaKeyTimestamp": "1769831808",
+          "jpegThumbnail": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wgARCABIAEgDASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAIBBAUDBv/EABgBAAMBAQAAAAAAAAAAAAAAAAABAgME/9oADAMBAAIQAxAAAACWV+ihiWRDqGL152Mi8MaCNx7ClqkBdQdunaYQpIGFq5N7JZC3uEE6FFKWxa81p6GmOU/OpK8zt3ZaGr933Wba7ppLHMH5xw5XsWAK6qHVEABzAH//xAAbEQACAwEBAQAAAAAAAAAAAAABEAACEVEgMf/aAAgBAgEBPwBj6tmhAYgZsB5BZEqtezA6jT4//8QAGxEAAgIDAQAAAAAAAAAAAAAAAAERIBAhMEH/2gAIAQMBAT8A5wbRNGyM+U//xAAmEAACAgECBgIDAQAAAAAAAAABAgARAwQhBRITMUFhEFEiI3EU/9oACAEBAAE/ABAIB8VGUFSDMi0xHuaIfvEqCCD5yEKjH1H3JM0KHqE12EqCAzxB8ZE50K/c0+lKuS4BHiBFXsKhmLOmU0p3lTNr8GE0TZ9ROJ6djuxH9iZseQWjAwfJiOym1NGIzPo7XdqmcMHPMCDCQKqYhlx4+sthfuYOJUgOSJxLAzUSV/sVg4tSCPUqIpa68TT6tMOnIbuOwmbIudi+Qb+AJ/iyOLUbfU6WdcfTYHlHiIhxZf3Ka+ozWxNbeJwVnZ3FnlrtKAisRdeYxmDDdbTplUmMsdgu48mPokzm8u/uZOEKT+OSh7mk0y6VCF3J7mM8sDvAba5pUAxK1eI7/kBURBVwwnaFiYxl33izSNzYVrxFUA7wHaMZuYdoxuf//gADAP/Z",
+          "contextInfo": {
+            "expiration": 86400,
+            "disappearingMode": {
+              "initiator": "CHANGED_IN_CHAT",
+              "trigger": "CHAT_SETTING",
+              "initiatedByMe": false
+            },
+            "statusSourceType": "IMAGE"
+          },
+          "firstScanSidecar": "nbvT/LrjMEt7+A==",
+          "firstScanLength": 12288,
+          "scansSidecar": "nbvT/LrjMEt7+NMPt3iG0BdkAxeULTl2sSbJ+yMoN2LX6t/tSowDaA==",
+          "scanLengths": [
+            12288,
+            27670,
+            19981,
+            74652
+          ],
+          "midQualityFileSha256": "x58BcXR/q2PTW96QpPbi2olxK8gBrJqH47/An9ei7EI=",
+          "imageSourceType": "USER_IMAGE"
+        }
+      },
+      "expiration": 86400,
+      "disappearingMode": {
+        "initiator": "CHANGED_IN_CHAT",
+        "trigger": "CHAT_SETTING",
+        "initiatedByMe": false
+      },
+      "quotedType": "EXPLICIT"
+    }
+  },
+  "messageContextInfo": {
+    "messageSecret": "NFGXJ00pE4TcXW+LP6+LrU5Ko6kIjm3aELj+QeitTOg="
+  }
+}
+[2026-01-31T04:00:11.131Z] INFO: Quoted Message: {
+  "imageMessage": {
+    "url": "https://mmg.whatsapp.net/o1/v/t24/f2/m232/AQNcBL1U7R3BWdBMFMKLd4UXdxbDT8Dh7cN9x0WutNnfP_VjKSdMq_DMjjbk5tnR35Ai3N3XjwkIo9U60HRDi-DCqWuAfT5ABMvwgxI8zQ?ccb=9-4&oh=01_Q5Aa3gHLBuPZ3IbMncQ9rz7qb6hIzBPZ0m1yTR-YMIxP6pIUBQ&oe=69A4F04E&_nc_sid=e6ed6c&mms3=true",
+    "mimetype": "image/jpeg",
+    "caption": "kacamata",
+    "fileSha256": "+5ZNMv2scbjQ2et2S7bWMzr4ng7sukEqZHYi+ssJsCk=",
+    "fileLength": "134593",
+    "height": 1600,
+    "width": 1200,
+    "mediaKey": "IZfdCiS8XuAjJtgBYivXAeWcGjUo5lri1xWvp5qPLSg=",
+    "fileEncSha256": "R2C7iEGrtPKFi/4soOmHoCdxN4BfG00FHjUZ2921uMQ=",
+    "directPath": "/o1/v/t24/f2/m232/AQNcBL1U7R3BWdBMFMKLd4UXdxbDT8Dh7cN9x0WutNnfP_VjKSdMq_DMjjbk5tnR35Ai3N3XjwkIo9U60HRDi-DCqWuAfT5ABMvwgxI8zQ?ccb=9-4&oh=01_Q5Aa3gHLBuPZ3IbMncQ9rz7qb6hIzBPZ0m1yTR-YMIxP6pIUBQ&oe=69A4F04E&_nc_sid=e6ed6c",
+    "mediaKeyTimestamp": "1769831808",
+    "jpegThumbnail": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wgARCABIAEgDASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAIBBAUDBv/EABgBAAMBAQAAAAAAAAAAAAAAAAABAgME/9oADAMBAAIQAxAAAACWV+ihiWRDqGL152Mi8MaCNx7ClqkBdQdunaYQpIGFq5N7JZC3uEE6FFKWxa81p6GmOU/OpK8zt3ZaGr933Wba7ppLHMH5xw5XsWAK6qHVEABzAH//xAAbEQACAwEBAQAAAAAAAAAAAAABEAACEVEgMf/aAAgBAgEBPwBj6tmhAYgZsB5BZEqtezA6jT4//8QAGxEAAgIDAQAAAAAAAAAAAAAAAAERIBAhMEH/2gAIAQMBAT8A5wbRNGyM+U//xAAmEAACAgECBgIDAQAAAAAAAAABAgARAwQhBRITMUFhEFEiI3EU/9oACAEBAAE/ABAIB8VGUFSDMi0xHuaIfvEqCCD5yEKjH1H3JM0KHqE12EqCAzxB8ZE50K/c0+lKuS4BHiBFXsKhmLOmU0p3lTNr8GE0TZ9ROJ6djuxH9iZseQWjAwfJiOym1NGIzPo7XdqmcMHPMCDCQKqYhlx4+sthfuYOJUgOSJxLAzUSV/sVg4tSCPUqIpa68TT6tMOnIbuOwmbIudi+Qb+AJ/iyOLUbfU6WdcfTYHlHiIhxZf3Ka+ozWxNbeJwVnZ3FnlrtKAisRdeYxmDDdbTplUmMsdgu48mPokzm8u/uZOEKT+OSh7mk0y6VCF3J7mM8sDvAba5pUAxK1eI7/kBURBVwwnaFiYxl33izSNzYVrxFUA7wHaMZuYdoxuf//gADAP/Z",
+    "contextInfo": {
+      "expiration": 86400,
+      "disappearingMode": {
+        "initiator": "CHANGED_IN_CHAT",
+        "trigger": "CHAT_SETTING",
+        "initiatedByMe": false
+      },
+      "statusSourceType": "IMAGE"
+    },
+    "firstScanSidecar": "nbvT/LrjMEt7+A==",
+    "firstScanLength": 12288,
+    "scansSidecar": "nbvT/LrjMEt7+NMPt3iG0BdkAxeULTl2sSbJ+yMoN2LX6t/tSowDaA==",
+    "scanLengths": [
+      12288,
+      27670,
+      19981,
+      74652
+    ],
+    "midQualityFileSha256": "x58BcXR/q2PTW96QpPbi2olxK8gBrJqH47/An9ei7EI=",
+    "imageSourceType": "USER_IMAGE"
+  }
+}
+[2026-01-31T04:00:11.131Z] INFO: Parsed argText: ""
+[2026-01-31T04:00:11.131Z] INFO: --------------------
+[2026-01-31T04:00:32.168Z] INFO: [STORE] Updated contact: 128290689970412@lid → Alvian
+[2026-01-31T04:00:36.065Z] INFO: [STORE] Updated contact: 42907495039214@lid → elruwet
+[2026-01-31T04:01:22.989Z] INFO: [dotenv@17.2.3] injecting env (6) from .env [2m-- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }[0m
+[2026-01-31T04:01:22.995Z] INFO: [STORE] Loaded 33 contacts
+[2026-01-31T04:01:23.353Z] INFO: 📦 Loaded 14 features
+[2026-01-31T04:01:23.560Z] INFO: Emoji cache initialized for apple
+[2026-01-31T04:01:23.561Z] INFO: Preloading 20 popular emojis...
+[2026-01-31T04:01:24.484Z] INFO: Preloaded 5/20 popular emojis
+[2026-01-31T04:01:26.431Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-01-31T04:01:26.431Z] INFO: 👑 Owner: 6285226166485
+[2026-01-31T04:01:30.540Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-01-31T04:02:16.300Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:04:28.135Z] INFO: [dotenv@17.2.3] injecting env (6) from .env [2m-- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }[0m
+[2026-01-31T04:04:28.143Z] INFO: [STORE] Loaded 33 contacts
+[2026-01-31T04:04:28.515Z] INFO: 📦 Loaded 14 features
+[2026-01-31T04:04:28.728Z] INFO: Emoji cache initialized for apple
+[2026-01-31T04:04:28.729Z] INFO: Preloading 20 popular emojis...
+[2026-01-31T04:04:29.650Z] INFO: Preloaded 5/20 popular emojis
+[2026-01-31T04:04:31.864Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-01-31T04:04:31.865Z] INFO: 👑 Owner: 6285226166485
+[2026-01-31T04:05:05.844Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:05:06.290Z] ERROR: [UNHANDLED FAILURE] TypeError: fetch failed
+    at node:internal/deps/undici/undici:14900:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async getHttpStream (file:///home/fahmyzzx/srv/simple_botwa/node_modules/@whiskeysockets/baileys/lib/Utils/messages-media.js:298:22)
+    at async downloadEncryptedContent (file:///home/fahmyzzx/srv/simple_botwa/node_modules/@whiskeysockets/baileys/lib/Utils/messages-media.js:440:21)
+    at async downloadMsg (file:///home/fahmyzzx/srv/simple_botwa/node_modules/@whiskeysockets/baileys/lib/Utils/messages.js:826:24)
+    at async downloadMediaMessage (file:///home/fahmyzzx/srv/simple_botwa/node_modules/@whiskeysockets/baileys/lib/Utils/messages.js:791:20)
+    at async GroupStatusFeature.execute (/home/fahmyzzx/srv/simple_botwa/features/SwgcFeatures.js:52:31)
+    at async EventEmitter.<anonymous> (/home/fahmyzzx/srv/simple_botwa/main.js:183:7) {
+  [cause]: AggregateError [ETIMEDOUT]: 
+      at internalConnectMultiple (node:net:1122:18)
+      at internalConnectMultiple (node:net:1190:5)
+      at Timeout.internalConnectMultipleTimeout (node:net:1716:5)
+      at listOnTimeout (node:internal/timers:583:11)
+      at process.processTimers (node:internal/timers:519:7) {
+    code: 'ETIMEDOUT',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[2026-01-31T04:05:14.380Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:05:57.284Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:07:19.208Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:08:47.613Z] INFO: [STORE] Updated contact: 7121122947166@lid → Dimas EG
+[2026-01-31T04:09:01.169Z] INFO: [dotenv@17.2.3] injecting env (6) from .env [2m-- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild[0m
+[2026-01-31T04:09:01.175Z] INFO: [STORE] Loaded 34 contacts
+[2026-01-31T04:09:01.538Z] INFO: 📦 Loaded 14 features
+[2026-01-31T04:09:01.739Z] INFO: Emoji cache initialized for apple
+[2026-01-31T04:09:01.740Z] INFO: Preloading 20 popular emojis...
+[2026-01-31T04:09:02.660Z] INFO: Preloaded 5/20 popular emojis
+[2026-01-31T04:09:04.781Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-01-31T04:09:04.781Z] INFO: 👑 Owner: 6285226166485
+[2026-01-31T04:09:09.296Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:09:31.525Z] INFO: [CMD] swgc from fahmy (257655222313007)
+[2026-01-31T04:11:54.561Z] INFO: [STORE] Updated contact: 6285954261367@s.whatsapp.net → Ndut
+[2026-01-31T04:15:44.299Z] INFO: [STORE] Updated contact: 6285772365742@s.whatsapp.net → .
+[2026-01-31T04:17:22.912Z] INFO: [STORE] Updated contact: 120589964558343@lid → Richyee
+[2026-01-31T04:23:15.869Z] INFO: [STORE] Updated contact: 62895360881089@s.whatsapp.net → c

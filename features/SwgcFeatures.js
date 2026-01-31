@@ -28,19 +28,15 @@ class GroupStatusFeature {
         // =========================
         // 1️⃣ MEDIA LANGSUNG (PALING AMAN)
         // =========================
-        if (msg.imageMessage || msg.videoMessage) {
-            caption =
-                msg.imageMessage?.caption ||
-                msg.videoMessage?.caption ||
-                '';
-
+        const directMedia = msg.imageMessage || msg.videoMessage;
+        if (directMedia) {
+            caption = directMedia.caption || '';
             mediaBuffer = await downloadMediaMessage(
                 m,
                 'buffer',
                 {},
                 { logger: console, reuploadRequest: sock.updateMediaMessage }
             );
-
             mediaType = msg.imageMessage ? 'image' : 'video';
         }
 
@@ -49,31 +45,37 @@ class GroupStatusFeature {
         // =========================
         else {
             const quoted = parsed.quoted;
+            if (quoted) {
+                // Support View Once (RVO)
+                let viewOnce = quoted.viewOnceMessageV2Extension?.message ||
+                               quoted.viewOnceMessageV2?.message ||
+                               quoted.viewOnceMessage?.message ||
+                               quoted;
 
-            if (quoted?.imageMessage || quoted?.videoMessage) {
-                caption =
-                    quoted.imageMessage?.caption ||
-                    quoted.videoMessage?.caption ||
-                    '';
+                const quotedMedia = viewOnce?.imageMessage || viewOnce?.videoMessage;
 
-                mediaBuffer = await downloadMediaMessage(
-                    { message: quoted },
-                    'buffer',
-                    {},
-                    { logger: console, reuploadRequest: sock.updateMediaMessage }
-                );
-
-                mediaType = quoted.imageMessage ? 'image' : 'video';
+                if (quotedMedia) {
+                    caption = quotedMedia.caption || '';
+                    mediaBuffer = await downloadMediaMessage(
+                        { message: viewOnce },
+                        'buffer',
+                        {},
+                        { logger: console, reuploadRequest: sock.updateMediaMessage }
+                    );
+                    mediaType = viewOnce.imageMessage ? 'image' : 'video';
+                }
             }
         }
 
         // =========================
         // 3️⃣ OVERRIDE CAPTION (!swgc xxx)
         // =========================
-        // Use parsed override if caption not set or if needed
-        // Logic original: jika ada text setelah command, replace caption
-        
-        if (parsed.argText) {
+        /**
+         * Logic update: 
+         * Jika user mengetik text setelah command (!swgc Halo!), gunakan itu sebagai caption utamanya.
+         * Jika TIDAK ada text setelah command, tetap pertahankan caption asli bawaan media.
+         */
+        if (parsed.argText && parsed.argText.trim().length > 0) {
             caption = parsed.argText;
         }
 
@@ -94,9 +96,9 @@ class GroupStatusFeature {
         });
 
         const content = {
-            ...(caption ? { text: caption } : {}),
-            ...(mediaType === 'image' ? { image: mediaBuffer } : {}),
-            ...(mediaType === 'video' ? { video: mediaBuffer } : {}),
+            ...(mediaType === 'image' ? { image: mediaBuffer, caption: caption } : {}),
+            ...(mediaType === 'video' ? { video: mediaBuffer, caption: caption } : {}),
+            ...(!mediaType && caption ? { text: caption } : {}),
             backgroundColor: '#1b2226',
         };
 
