@@ -7,5 +7,15 @@ module.exports = {
   gemini: {
     apiKey: process.env.GEMINI_API_KEY,
     baseUrl: process.env.GEMINI_API_URL || 'https://generativelanguage.googleapis.com/v1beta/models/'
+  },
+  aiFeature: {
+    apiKey: process.env.AI_FEATURE_API_KEY,
+    baseUrl: process.env.AI_FEATURE_API_URL || 'https://api.ferdev.my.id/ai/gptlogic'
+  },
+  stickerService: {
+    telegram: {
+      apiKey: process.env.TELEGRAM_STICKER_API_KEY,
+      endpoint: process.env.TELEGRAM_STICKER_API_URL || 'https://api.ferdev.my.id/sticker/telestick'
+    }
   }
 };

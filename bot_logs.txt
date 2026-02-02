@@ -2246,3 +2246,1047 @@ Require stack:
 [2026-01-31T04:15:44.299Z] INFO: [STORE] Updated contact: 6285772365742@s.whatsapp.net → .
 [2026-01-31T04:17:22.912Z] INFO: [STORE] Updated contact: 120589964558343@lid → Richyee
 [2026-01-31T04:23:15.869Z] INFO: [STORE] Updated contact: 62895360881089@s.whatsapp.net → c
+[2026-02-02T03:35:23.916Z] INFO: [dotenv@17.2.3] injecting env (8) from .env [2m-- tip: 📡 add observability to secrets: https://dotenvx.com/ops[0m
+[2026-02-02T03:35:23.919Z] INFO: [STORE] Loaded 37 contacts
+[2026-02-02T03:35:24.112Z] INFO: 📦 Loaded 15 features
+[2026-02-02T03:35:24.208Z] INFO: Emoji cache initialized for apple
+[2026-02-02T03:35:24.208Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T03:35:24.526Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T03:35:26.934Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T03:35:26.934Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T03:42:07.510Z] INFO: [dotenv@17.2.3] injecting env (8) from .env [2m-- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops[0m
+[2026-02-02T03:42:07.512Z] INFO: [STORE] Loaded 37 contacts
+[2026-02-02T03:42:07.638Z] INFO: 📦 Loaded 15 features
+[2026-02-02T03:42:07.706Z] INFO: Emoji cache initialized for apple
+[2026-02-02T03:42:07.706Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T03:42:08.026Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T03:42:10.619Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T03:42:10.620Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T03:44:04.440Z] INFO: [dotenv@17.2.3] injecting env (8) from .env [2m-- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }[0m
+[2026-02-02T03:44:04.442Z] INFO: [STORE] Loaded 37 contacts
+[2026-02-02T03:44:04.571Z] INFO: 📦 Loaded 15 features
+[2026-02-02T03:44:04.667Z] INFO: Emoji cache initialized for apple
+[2026-02-02T03:44:04.667Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T03:44:04.986Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T03:44:06.563Z] INFO: ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █▀█▀▀ █▄▄ ▀▀  █  ▄▄▄ ▄ ▄▄█ ▄▀█   █▄   █▄ ██ ▄▄▄▄▄ █
+█ █   █ █▄█ ██▄▄██ █ █▀█▄███▄█▄▀▀▄▄▄▄▄█▀███ █▄▀▄ ██ █   █ █
+█ █▄▄▄█ █ ▀▄ ▄▄▀██ █▀█▀ ▀▄  ▄▄▄ ▀▀▄▀▀ █  █   ▀ ▀▄██ █▄▄▄█ █
+█▄▄▄▄▄▄▄█ █ █ █ ▀ ▀ ▀ █ ▀▄█ █▄█ ▀▄█▄█ ▀▄▀▄█▄▀▄▀ █ █▄▄▄▄▄▄▄█
+█▄▄▀ █▀▄▄██▄▄  ▀▄▄█ ▄█  ▄▄  ▄▄ ▄██ ▄▄▄ █▄▄▄█ ████▄█▄▄ ▀▄▄██
+█▄▄  █▀▄ ██▄ ▄▀█ ▀▀▄▄▄   ▀█▀▀▀ ▀  ▀█ █▄▀   ▀▄▀▀  █ ▄ █▀█▀▄█
+██▀▄▀█ ▄ ▄ ▄██▄█▄▀█▄▀▄ ▀▄█▀█▀ █▀▄▄▄▀   █▄▄ █▄▄▄ ▄███▄ ▀▄▄██
+█  █ █▄▄▀█ ▄  ▄▄▀▄▄▀▄▄██▀ ██ ▄▄ ▄▀ ▀▀ ▀▄▀ ▀█ ▄▀▀█▄  ▄█ █▄▀█
+█▄▀▀ █ ▄████▀▄▀ ▄█▄▄█▀▄▀▀█▄▄   █▄▄ ▄ ▄▄▀▄██▄█ ██▄█▄▀ █▀█ ██
+██ ▄█▀▄▄▄▄█ ▄█▀▄█▀▀ ▀▀▄█▀▄▀█▄███  ▄▀  ▄ ▄  █ ▀██▀▀ ▄██ █▄▄█
+█▀█▀█▄█▄█▄ ▄ ▄███ █  █▄ ▄ ▄ ▀▄▄▄▀▀ ▄▀▄▄█  ▄█▄██▄▀█ ▄▄ ██▄▀█
+█ ▀▀▄ ▄▄▀ ▀▄██ ▄█ ▀█▀ ▄▄▀▀▄██ ▀▄▀ ▄ ▄▄ ▄▀ ▀█▄█ ██ ▄█▀▄▀▄▄ █
+███▄██ ▄█   ▄▀██▄ █ ██  █▄█ █▄██▄▀██ ▄ █ ▄▄██▄▄▀▄█ ▄▄▄▀█▄██
+█  ▀▄ ▄▄▄ ▄▄██▄   ▀▀▄▀█▄    ▄▄▄ ▄ █▄ ▀█▀██ █▀ ▀██ ▄▄▄ ▄▄▄██
+██ ▄▄ █▄█ ▀▀█▀▄ ▄█▄██ ██ █▄ █▄█ ▄▄▀▄    ▄█ █▀▄▄▄▀ █▄█ ▀ ▀▄█
+█   ▄▄▄▄▄ ▀▀▀█▄▀  ▄  ▄ ▄▀▄ ▄ ▄▄ ▀ ▄██ ▄██▀▀█▄ ▀██ ▄▄  ▄█ ▄█
+█ ▄█ ▄ ▄▀▄▀▀ █ ▄▄██▄██  ██▀ ▄▄▄▄█▀ ▄▄▄▄▄▄▄▀▄ █▄█▄▀▀▀███▄▀▀█
+█  ▄▄▀ ▄▀█ ██▀█▀ ██ ▄▀█▀█▀▀▀▀ ▀▄█▀▀ ▀ ▀█▄▀▄█ █▄█▀▀▀▄▀█▀▄▀ █
+█▀▀▄▀ █▄ █ ███ █  █ ▀ █▄ ▄█▄  ▀  ▄█ █▄ ▄  ██▄ █ █▄██ ▀▄ ▄ █
+██▀▀█  ▄ ██▀▄ ▀▀ ▄▀▄█ ▄▄▀▄▀  ▄▀ █▄▀██ ▄ ▀▀ ▀▀ █▀▄█ ▀▀ ▄█ ▄█
+██▄▀▀▀ ▄▄▀ ▄█  ▀██▀ ▀▀ ▀ ▄ ▄██ ▀▄  █ ▄█  ▀ ▄█▄▄▄█ ▄█▀▄▄█▄▄█
+█▄▄▄▄▄▄▄▄ ▀ ▄▀ ▄█ █▄ ▄ █ ██   ▄ ▀   ▄▀▄▄██▀▄▀▀ ▀▀ ▄ ▀█ ▄▄▄█
+█▀█▄▀█ ▄▄██▀ ▀ ▄ █▄▄▄▄ █▀█ ▀█▄▄ ▄█▄█▄ ▄▄▄▄█▄ ███▄▄▄▀██▄█▄ █
+█ ▀ ▀▀▄▄ ▀█▀█▀ █▀▄▄ ▄ ▀▄▄▄██▀▀  ▀▄█ ▀ ▀▄▀█▀██ ▀█▄▀▀  ▀ ▄▀ █
+███████▄█ ▄  ▀▀▄ ▀▄▄▄██▄██▄ ▄▄▄ ▀▄█  ▄▀▄  █▄▄▄█▀█ ▄▄▄ █▄▀▀█
+█ ▄▄▄▄▄ █▄▀▀█▄▄▄▀██ █▄▄▄▀▄  █▄█ ▄▄█▀▀▀██▄▀▄▀██▄ ▀ █▄█ █▄▀▀█
+█ █   █ █▀██▄ ▄▀█▀ ▄▀ ▄▀▀ ▀▄    ▀▄██▄ █ ▀▀ ██ ██▀  ▄▄  ▄  █
+█ █▄▄▄█ █▀▄▀▀▀▀▄██▄ ▄▄▄▀█▀▄▄  █▀▄▄██▀█ █▄█▀▄█▄▄ ▀  ▄█▄███▄█
+█▄▄▄▄▄▄▄█▄█▄▄▄▄▄▄▄█▄▄█▄▄██▄█▄█▄▄▄▄███▄▄▄▄▄█▄▄█▄▄▄███████▄██
+
+[2026-02-02T03:44:06.563Z] INFO: 📱 Scan QR code!
+[2026-02-02T03:45:26.577Z] INFO: [dotenv@17.2.3] injecting env (8) from .env [2m-- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops[0m
+[2026-02-02T03:45:26.579Z] INFO: [STORE] Loaded 37 contacts
+[2026-02-02T03:45:26.705Z] INFO: 📦 Loaded 15 features
+[2026-02-02T03:45:26.794Z] INFO: Emoji cache initialized for apple
+[2026-02-02T03:45:26.795Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T03:45:27.112Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T03:45:28.193Z] INFO: ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █ █▀██ █ █▀▄▀▄▄▄▀ ▀ ██▀▄██▀▀▀ █  ▀▄▄ ▄▀▄ ██ ▄▄▄▄▄ █
+█ █   █ █ ▀   ▀▄▄▀█▄▄▄█ ▄▄▀█▀▀ ▀▀█▄▄▄▄▄▀▄▀▄▄▄▄ ▄ ██ █   █ █
+█ █▄▄▄█ █▀  ▀▄▀▀▀██▀▀█▄█▀   ▄▄▄ ▀▄ ▀  █ ▀ ▀▄▀ ▄▀▄██ █▄▄▄█ █
+█▄▄▄▄▄▄▄█▄█▄█ ▀ ▀ ▀▄▀ █ ▀▄█ █▄█ ▀▄█▄█ █ █▄█▄█ ▀▄█ █▄▄▄▄▄▄▄█
+█ ▄█▀ ▄▄█▀▀ ▀ ▀▄▀▄  ▀▀▄▀▀▀▀  ▄  ▄ ▄█▀ ▄ ██▀▀▀▄ ▄▀ █▀▄█▄ ▄▄█
+█  ▀▄ █▄▄▄██ ▄▄ ▀ ▄█▀▀▀█   █▀▄█ ▀█▄▄██▄▀█▄  █ ▀▄▀▄█▀█▄▄▄▄██
+█ ▄  ▀▀▄  ▄▄▀ ▀▀ █▀ ▄▀▄▄▀▀▄ ▄█▀█▀▄ ▄  ▄▀█▀  █▄▄█▀ █ █▀█▄▀▄█
+█▄███▀▀▄▀█▀▄▀ ▄▄██ ▀█     ▀█   █▄█▄ ██▄    ▀▀▀██████▄█▄█▀▀█
+█▄▀▄█▀▀▄▄████ ▀  █▀▄▄▀▄█▀ █ ▄ ▀▀█▄██▄▄▄  █  █ ▀▄▀ █▀▀█ █▀▄█
+██ ▄ ▀▀▄  ▀█▄ ▀█ ▄█ ▀▀  █▄▀▄██▀█▄▀▀▀ █ █ ▀▄▄▀██▄▄▄▀▄▄▀█▄▄██
+█▀▀█▀ █▄▄▄▀█▀▄▄ ▀▀ ▄▀  █▀▄██▄█ ▀█▄▀▄  ▄▀ ▀▀ ▀ ▀█▄▀▄▀ █ ▀▄██
+█▄▀▄  ▀▄▄▄▄▀█▄  ▄█▀█▄█▀▀▄ ▀ █▄▀█▄█▄█▄████▄██▀ ▀▄██▄ ▄▀▄█▀██
+█ ▄▀▄▄█▄█ ██ ▀ █▄▄ ▄ ▀█▀▀▀  ▀▀▀▀▀█▀  ▄▄▀ ▀▀▀█ ▀█ ▀█▀▄██ ▀██
+██▀ ▀ ▄▄▄ ▀█▀▀ █▄▀▀  ▀▄ ▄▄  ▄▄▄ ▄ ▄▄██ ▄▀ █▀▀▀ ▄  ▄▄▄ ▄█ ▀█
+█▀▄   █▄█ ██▄█▀▀▀▄▄▀▄▀▀█▀   █▄█ █▄▀█  █  ▀  ▀▄ █▀ █▄█ ██▄▀█
+█   █ ▄▄ ▄▄█▄█ ▀▀▄▀▀▄▀▀▀ █▄ ▄▄▄ ▀▀▄██▀█▀▀▀▀▀▀▄▀█▀  ▄ ▄▄▄▄▀█
+█▀▀▄█▄ ▄██▄▄██▄ ▀█  ▄  █ ▀▀█ █▀ ▄ ▄█  ▄▀▄▀ ▀▀▄▀▄█ ▄▀▀▄█▀▄██
+██▄ ▀ ▀▄▀▄  ▀██▄  ▄█▄█▀ █▀  █▀▄█▄▀▄█  ▀█▀ ▀█▀▄▀▄  ▀▀▀▀▄▄▄▀█
+██▄ ▄█ ▄▀ ███▄  ▄█▄▄▄▄▄▀▄ ▀ ▄█▄▄█▄ █▄ █▀ █▀ ▀  █▀ ██▀▄▀▀▀██
+█▄▀▀ ▀█▄█ ▀▀█ █▄▀ █▀▀ ▄█▀██▄▀ ▀▀▀█  ██▀▄ ▀▄█▀ ▄█  ▄█▄▀ ▄▄▄█
+█  ▄  ▄▄ ▀▄▄▄▄█▄▀█  ▀▀▄▀ ▀ ▄▀▄  ▄ ▄█▄▄  ▄█▀ ▀  ▄▀█▄ ▀█ █ ▄█
+█▄▄▀ ▄▄▄██▀▀▀██ ▄ ▄█▄▄▀████▀ ▀█▀▀██ ▄ ▄▄ ██▄▄▀▄ ▄▀▄█ ▄▄▄ ██
+█ ▄ ██▀▄██▀▄  █  ▄▀ █ ▄▄   ▀▀▄▄▄▀▄ ▄  █▀██▄▀█  █▀▀ ▀▄▄▀▀▄██
+█ ▀ ▀▀▄▄▄▄▀▀██▄▄ ▀█▀  ▄▀ ▀▄▄ ███▄▀█▄█▀▀▀  ▀▄ █▀ █ █▀  ▄▄ ██
+███████▄█ ▄█▄▀▀█▄▄ ▄▄▀ ▀▀▀▄ ▄▄▄ █▄▀█▀▄█▀▄▀▀▀▀▄▀▄▀ ▄▄▄  ▄  █
+█ ▄▄▄▄▄ █▀█ ▄  ▀▀ █▄▀██▀█▄▄ █▄█  ▀▄ █▀ ▄▄█▀█▄█▄▀█ █▄█ █▄▄▀█
+█ █   █ █▄█ █▄▀█▀▀▀▄▀ ▄▀▀▄█▄   ▄█ ▀██▄▄▀█▀  ▀▄▀█      ▄▄ ▀█
+█ █▄▄▄█ █▀█▄▄  ▄▄█▀▀▄██▄▄ █▄▄ ▄ ██▄█▀▄█▄█ ██ █▄▀▀█ ▄█▄ ████
+█▄▄▄▄▄▄▄█▄▄▄████▄▄█▄▄█▄████▄███▄███▄▄▄▄▄▄█▄██▄██▄███▄█▄██▄█
+
+[2026-02-02T03:45:28.193Z] INFO: 📱 Scan QR code!
+[2026-02-02T03:45:40.465Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T03:45:40.465Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T03:46:31.579Z] INFO: [STORE] Updated contact: 6285226166485@s.whatsapp.net → fahmy
+[2026-02-02T03:46:31.579Z] INFO: [CMD] ping from fahmy (6285226166485)
+[2026-02-02T03:46:42.517Z] INFO: [STORE] Updated contact: 6285226166485@s.whatsapp.net → Unknown
+[2026-02-02T03:46:54.680Z] INFO: [CMD] help from fahmy (257655222313007)
+[2026-02-02T03:47:05.972Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:47:18.969Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:47:41.185Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:48:03.810Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:48:13.154Z] INFO: [STORE] Updated contact: 6288802913187@s.whatsapp.net → ألفي
+[2026-02-02T03:48:25.977Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:48:47.228Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:48:56.287Z] INFO: [CMD] gem from fahmy (257655222313007)
+[2026-02-02T03:49:26.085Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:50:23.914Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:50:39.883Z] INFO: [STORE] Updated contact: 120363327052134318@newsletter → Unknown
+[2026-02-02T03:50:46.997Z] INFO: [CMD] tagall from fahmy (257655222313007)
+[2026-02-02T03:54:23.329Z] INFO: [STORE] Updated contact: 6285956741132@s.whatsapp.net → masGalang
+[2026-02-02T03:54:47.281Z] INFO: [STORE] Updated contact: 254348063957207@lid → saskia rara
+[2026-02-02T03:55:13.154Z] INFO: [STORE] Updated contact: 62882006374624@s.whatsapp.net → Devina
+[2026-02-02T03:55:48.614Z] INFO: [dotenv@17.2.3] injecting env (8) from .env [2m-- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild[0m
+[2026-02-02T03:55:48.617Z] INFO: [STORE] Loaded 41 contacts
+[2026-02-02T03:55:48.742Z] INFO: 📦 Loaded 15 features
+[2026-02-02T03:55:48.810Z] INFO: Emoji cache initialized for apple
+[2026-02-02T03:55:48.811Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T03:55:49.127Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T03:55:51.574Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T03:55:51.574Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T03:56:01.291Z] INFO: [CMD] tagall from fahmy (257655222313007)
+[2026-02-02T03:56:25.480Z] INFO: [CMD] tagall from fahmy (257655222313007)
+[2026-02-02T03:57:43.938Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:58:01.050Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T03:59:59.748Z] INFO: [dotenv@17.2.3] injecting env (8) from .env [2m-- tip: 📡 add observability to secrets: https://dotenvx.com/ops[0m
+[2026-02-02T03:59:59.750Z] INFO: [STORE] Loaded 41 contacts
+[2026-02-02T03:59:59.888Z] INFO: 📦 Loaded 15 features
+[2026-02-02T03:59:59.958Z] INFO: Emoji cache initialized for apple
+[2026-02-02T03:59:59.958Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:00:00.278Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:00:02.588Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:00:02.589Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:00:09.666Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T04:00:38.720Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-02-02T04:00:38.720Z] INFO: [CMD] ai from fahmy (628895437448)
+[2026-02-02T04:00:40.860Z] ERROR: [AI FEATURE FAILURE] Blocked request. This host ("api.ferdev.my.id") is not allowed.
+To allow this host, add "api.ferdev.my.id" to `server.allowedHosts` in vite.config.js.
+[2026-02-02T04:01:07.574Z] INFO: [CMD] ai from fahmy (628895437448)
+[2026-02-02T04:01:43.488Z] INFO: [CMD] ai from fahmy (628895437448)
+[2026-02-02T04:02:03.503Z] INFO: [CMD] ai from fahmy (628895437448)
+[2026-02-02T04:03:13.968Z] INFO: [STORE] Updated contact: 6285712867153@s.whatsapp.net → 6285712867153
+[2026-02-02T04:06:21.717Z] INFO: [STORE] Updated contact: 6281227446406@s.whatsapp.net → ᴀᴢɪᴢ ᴀʟ ᴍᴜʙᴀsʏɪʀ
+[2026-02-02T04:08:39.157Z] INFO: [STORE] Updated contact: 6285712867153@s.whatsapp.net → fahmy
+[2026-02-02T04:09:40.772Z] INFO: [STORE] Updated contact: 153116053917773@lid → nrm
+[2026-02-02T04:10:30.331Z] INFO: [STORE] Updated contact: 224240662016230@lid → ®️™️
+[2026-02-02T04:11:33.717Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 📡 add observability to secrets: https://dotenvx.com/ops[0m
+[2026-02-02T04:11:33.720Z] INFO: [STORE] Loaded 45 contacts
+[2026-02-02T04:11:33.852Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:11:33.922Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:11:33.922Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:11:34.239Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:11:37.369Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:11:37.369Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:12:05.247Z] INFO: [CMD] tsticker from fahmy (257655222313007)
+[2026-02-02T04:12:16.496Z] INFO: [CMD] tsticker from fahmy (257655222313007)
+[2026-02-02T04:12:56.331Z] INFO: [CMD] tsticker from fahmy (257655222313007)
+[2026-02-02T04:12:59.691Z] ERROR: [TSTICKER] Failed to send Telegram sticker: 
+[2026-02-02T04:13:46.012Z] INFO: [STORE] Updated contact: 6288975918875@s.whatsapp.net → fahmy
+[2026-02-02T04:13:47.644Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-02-02T04:13:55.716Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-02-02T04:15:03.361Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`[0m
+[2026-02-02T04:15:03.363Z] INFO: [STORE] Loaded 46 contacts
+[2026-02-02T04:15:03.490Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:15:03.557Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:15:03.558Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:15:03.875Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:15:06.317Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:15:06.317Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:16:08.103Z] INFO: [STORE] Updated contact: 6285725285846@s.whatsapp.net → Abidin
+[2026-02-02T04:16:53.163Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`[0m
+[2026-02-02T04:16:53.166Z] INFO: [STORE] Loaded 47 contacts
+[2026-02-02T04:16:53.293Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:16:53.363Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:16:53.363Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:16:53.680Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:16:55.916Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:16:55.916Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:17:23.604Z] INFO: [STORE] Updated contact: 94589964508@lid → فيري
+[2026-02-02T04:17:32.090Z] INFO: [STORE] Updated contact: 6289618530045@s.whatsapp.net → fahmy
+[2026-02-02T04:17:42.556Z] INFO: [CMD] ts from fahmy (257655222313007)
+[2026-02-02T04:17:46.823Z] ERROR: [TSTICKER] Failed to send Telegram sticker: 
+[2026-02-02T04:21:19.090Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:21:19.927Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:21:19.927Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:21:19.927Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:21:20.337Z] ERROR: [UNHANDLED FAILURE] TypeError: QuoteGenerator is not a constructor
+    at QuoteStickerFeature.execute (/home/fahmyzzx/srv/simple_botwa/features/QuoteStickerFeature.js:132:27)
+    at async EventEmitter.<anonymous> (/home/fahmyzzx/srv/simple_botwa/main.js:183:7)
+[2026-02-02T04:21:32.815Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:21:32.822Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:21:32.822Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:21:32.822Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:21:33.325Z] ERROR: [UNHANDLED FAILURE] TypeError: QuoteGenerator is not a constructor
+    at QuoteStickerFeature.execute (/home/fahmyzzx/srv/simple_botwa/features/QuoteStickerFeature.js:132:27)
+    at async EventEmitter.<anonymous> (/home/fahmyzzx/srv/simple_botwa/main.js:183:7)
+[2026-02-02T04:22:17.900Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-02-02T04:22:41.919Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-02-02T04:22:58.805Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops[0m
+[2026-02-02T04:22:58.807Z] INFO: [STORE] Loaded 49 contacts
+[2026-02-02T04:22:58.938Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:22:59.008Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:22:59.008Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:22:59.327Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:23:02.072Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:23:02.072Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:23:05.176Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-02-02T04:23:05.188Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-02-02T04:23:05.189Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:23:05.909Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:23:05.909Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:23:05.909Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:23:06.582Z] ERROR: [UNHANDLED FAILURE] Error: Input file is missing:
+    at Sharp.toBuffer (/home/fahmyzzx/srv/simple_botwa/node_modules/sharp/lib/output.js:163:17)
+    at QuoteStickerFeature.execute (/home/fahmyzzx/srv/simple_botwa/features/QuoteStickerFeature.js:144:14)
+    at async EventEmitter.<anonymous> (/home/fahmyzzx/srv/simple_botwa/main.js:183:7)
+[2026-02-02T04:23:25.341Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:23:25.351Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:23:25.351Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:23:25.351Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:23:25.757Z] ERROR: [UNHANDLED FAILURE] Error: Input file is missing:
+    at Sharp.toBuffer (/home/fahmyzzx/srv/simple_botwa/node_modules/sharp/lib/output.js:163:17)
+    at QuoteStickerFeature.execute (/home/fahmyzzx/srv/simple_botwa/features/QuoteStickerFeature.js:144:14)
+    at async EventEmitter.<anonymous> (/home/fahmyzzx/srv/simple_botwa/main.js:183:7)
+[2026-02-02T04:24:08.215Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }[0m
+[2026-02-02T04:24:08.217Z] INFO: [STORE] Loaded 49 contacts
+[2026-02-02T04:24:08.345Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:24:08.414Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:24:08.414Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:24:08.732Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:24:11.543Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:24:11.543Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:24:13.003Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:24:13.897Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:24:13.897Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:24:13.897Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:24:33.658Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T04:24:34.355Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:24:34.355Z] INFO: [Q] Remote JID: 120363421573880224@g.us
+[2026-02-02T04:24:34.355Z] INFO: [Q] Quoted sender JID: 254348063957207@lid
+[2026-02-02T04:24:45.385Z] INFO: [CMD] q from fahmy (6288975918875)
+[2026-02-02T04:24:46.040Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:24:46.040Z] INFO: [Q] Remote JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:24:46.040Z] INFO: [Q] Quoted sender JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:25:04.561Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-02-02T04:27:06.937Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }[0m
+[2026-02-02T04:27:06.939Z] INFO: [STORE] Loaded 49 contacts
+[2026-02-02T04:27:07.068Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:27:07.140Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:27:07.140Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:27:07.461Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:27:10.440Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:27:10.440Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:27:12.916Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → fahmy
+[2026-02-02T04:27:12.916Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:27:14.418Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:27:14.419Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:27:14.419Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:38:12.015Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit[0m
+[2026-02-02T04:38:12.017Z] ERROR: [STORE] Failed to load store: Unexpected end of JSON input
+[2026-02-02T04:38:12.147Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:38:12.214Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:38:12.214Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:38:12.532Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:38:16.210Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:38:16.210Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:38:16.210Z] INFO: [STORE] Saved self contact: 6285226166485@s.whatsapp.net → fahmy
+[2026-02-02T04:38:45.784Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T04:38:47.349Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:38:47.350Z] INFO: [Q] Remote JID: 120363421573880224@g.us
+[2026-02-02T04:38:47.350Z] INFO: [Q] Quoted sender JID: 254348063957207@lid
+[2026-02-02T04:39:08.532Z] INFO: [CMD] q from fahmy (254348063957207)
+[2026-02-02T04:39:08.542Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:39:08.542Z] INFO: [Q] Remote JID: 254348063957207@lid
+[2026-02-02T04:39:08.542Z] INFO: [Q] Quoted sender JID: 254348063957207@lid
+[2026-02-02T04:40:43.493Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: ⚙️  write to custom object with { processEnv: myObject }[0m
+[2026-02-02T04:40:43.496Z] INFO: [STORE] Loaded 1 contacts
+[2026-02-02T04:40:43.626Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:40:43.695Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:40:43.696Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:40:44.017Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:40:46.039Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:40:46.039Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:40:56.365Z] INFO: [CMD] q from fahmy (254348063957207)
+[2026-02-02T04:40:57.079Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:40:57.080Z] INFO: [Q] Remote JID: 254348063957207@lid
+[2026-02-02T04:40:57.080Z] INFO: [Q] Quoted sender JID: 254348063957207@lid
+[2026-02-02T04:42:56.410Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit[0m
+[2026-02-02T04:42:56.412Z] INFO: [STORE] Loaded 1 contacts
+[2026-02-02T04:42:56.545Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:42:56.613Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:42:56.613Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:42:56.931Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:43:00.254Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:43:00.254Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:43:03.649Z] INFO: [CMD] q from fahmy (254348063957207)
+[2026-02-02T04:43:04.465Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:43:04.465Z] INFO: [Q] Remote JID: 254348063957207@lid
+[2026-02-02T04:43:04.465Z] INFO: [Q] Sender: 254348063957207@lid
+[2026-02-02T04:43:04.465Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:43:04.465Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:43:04.465Z] INFO: [Q] Quoted sender JID: 254348063957207@lid
+[2026-02-02T04:43:04.466Z] INFO: [Q] Quoted raw payload: Message { conversation: 'yaudh vc e' }
+[2026-02-02T04:43:04.466Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: '3A50347799299C93F346',
+  participant: '254348063957207@lid',
+  quotedMessage: Message { conversation: 'yaudh vc e' },
+  expiration: 0,
+  ephemeralSettingTimestamp: Long { low: 1758712678, high: 0, unsigned: false },
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 0, initiatedByMe: false },
+  quotedType: 0
+}
+[2026-02-02T04:43:04.466Z] INFO: [Q] Resolved name: +254348063957207
+[2026-02-02T04:43:04.466Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:43:04.466Z] INFO: [Q] Remote JID (context): 254348063957207@lid
+[2026-02-02T04:43:05.482Z] INFO: [Q] Resolved text: yaudh vc e
+[2026-02-02T04:43:05.482Z] INFO: [Q] Media detected: false
+[2026-02-02T04:43:05.482Z] INFO: [Q] Generated uniqueId: 625166342
+[2026-02-02T04:52:36.520Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops[0m
+[2026-02-02T04:52:36.522Z] INFO: [STORE] Loaded 1 contacts
+[2026-02-02T04:52:36.651Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:52:36.720Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:52:36.720Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:52:37.037Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:52:39.956Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:52:39.956Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:52:45.690Z] INFO: [CMD] q from fahmy (6288975918875)
+[2026-02-02T04:52:46.413Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:52:46.413Z] INFO: [Q] Remote JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:52:46.413Z] INFO: [Q] Sender: 6288975918875@s.whatsapp.net
+[2026-02-02T04:52:46.413Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:52:46.413Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:52:46.413Z] INFO: [Q] Quoted sender JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:52:46.414Z] INFO: [Q] Quoted raw payload: Message { conversation: 'Ngopi' }
+[2026-02-02T04:52:46.414Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'A5F9A6FAE3EAC377D91CBA734DBA6357',
+  participant: '6288975918875@s.whatsapp.net',
+  quotedMessage: Message { conversation: 'Ngopi' },
+  quotedType: 0
+}
+[2026-02-02T04:52:46.697Z] INFO: [Q] Resolved name: +6288975918875
+[2026-02-02T04:52:46.697Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:52:46.697Z] INFO: [Q] Remote JID (context): 6288975918875@s.whatsapp.net
+[2026-02-02T04:52:47.007Z] INFO: [Q] Resolved text: Ngopi
+[2026-02-02T04:52:47.007Z] INFO: [Q] Media detected: false
+[2026-02-02T04:52:47.008Z] INFO: [Q] Generated uniqueId: 1653118809
+[2026-02-02T04:53:30.712Z] INFO: [STORE] Updated contact: 153116053917773@lid → nrm
+[2026-02-02T04:53:39.342Z] INFO: [CMD] q from fahmy (6288975918875)
+[2026-02-02T04:53:39.349Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:53:39.349Z] INFO: [Q] Remote JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:53:39.349Z] INFO: [Q] Sender: 6288975918875@s.whatsapp.net
+[2026-02-02T04:53:39.349Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:53:39.349Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:53:39.349Z] INFO: [Q] Quoted sender JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:53:39.350Z] INFO: [Q] Quoted raw payload: Message { conversation: 'Ke ng ndi ceg' }
+[2026-02-02T04:53:39.350Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'A5F7D0A6176DC3D889DA9B7BCD1D1F52',
+  participant: '6288975918875@s.whatsapp.net',
+  quotedMessage: Message { conversation: 'Ke ng ndi ceg' },
+  quotedType: 0
+}
+[2026-02-02T04:53:39.605Z] INFO: [Q] Resolved name: +6288975918875
+[2026-02-02T04:53:39.605Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:53:39.605Z] INFO: [Q] Remote JID (context): 6288975918875@s.whatsapp.net
+[2026-02-02T04:53:39.848Z] INFO: [Q] Resolved text: Ke ng ndi ceg
+[2026-02-02T04:53:39.848Z] INFO: [Q] Media detected: false
+[2026-02-02T04:53:39.848Z] INFO: [Q] Generated uniqueId: 1653118809
+[2026-02-02T04:55:38.909Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: ⚙️  override existing env vars with { override: true }[0m
+[2026-02-02T04:55:38.912Z] INFO: [STORE] Loaded 2 contacts
+[2026-02-02T04:55:39.040Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:55:39.108Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:55:39.108Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:55:39.425Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:55:42.017Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:55:42.017Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:55:47.757Z] INFO: [CMD] q from fahmy (6288975918875)
+[2026-02-02T04:55:48.357Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:55:48.357Z] INFO: [Q] Remote JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:55:48.357Z] INFO: [Q] Sender: 6288975918875@s.whatsapp.net
+[2026-02-02T04:55:48.357Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:55:48.357Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:55:48.357Z] INFO: [Q] Quoted sender JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:55:48.358Z] INFO: [Q] Quoted raw payload: Message { conversation: 'Nda kwe?' }
+[2026-02-02T04:55:48.358Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'A55C3E6464539350E327307018289ED1',
+  participant: '6288975918875@s.whatsapp.net',
+  quotedMessage: Message { conversation: 'Nda kwe?' },
+  quotedType: 0
+}
+[2026-02-02T04:55:48.662Z] INFO: [Q] Resolved name: +6288975918875
+[2026-02-02T04:55:48.663Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:55:48.663Z] INFO: [Q] Remote JID (context): 6288975918875@s.whatsapp.net
+[2026-02-02T04:55:48.874Z] INFO: [Q] Resolved text: Nda kwe?
+[2026-02-02T04:55:48.874Z] INFO: [Q] Media detected: false
+[2026-02-02T04:55:48.875Z] INFO: [Q] Generated uniqueId: 1653118809
+[2026-02-02T04:55:58.741Z] INFO: [STORE] Updated contact: 42907495039214@lid → elruwet
+[2026-02-02T04:56:35.158Z] INFO: [STORE] Updated contact: 228531502088251@lid → Yannn Labs
+[2026-02-02T04:57:24.377Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops[0m
+[2026-02-02T04:57:24.379Z] INFO: [STORE] Loaded 4 contacts
+[2026-02-02T04:57:24.510Z] INFO: 📦 Loaded 16 features
+[2026-02-02T04:57:24.580Z] INFO: Emoji cache initialized for apple
+[2026-02-02T04:57:24.581Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T04:57:24.897Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T04:57:27.411Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T04:57:27.412Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T04:57:29.663Z] INFO: [STORE] Updated contact: 628895437448@s.whatsapp.net → saskia rara
+[2026-02-02T04:57:33.849Z] INFO: [CMD] q from fahmy (42907495039214)
+[2026-02-02T04:57:34.163Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:57:34.163Z] INFO: [Q] Remote JID: 42907495039214@lid
+[2026-02-02T04:57:34.163Z] INFO: [Q] Sender: 42907495039214@lid
+[2026-02-02T04:57:34.163Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:57:34.163Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:57:34.163Z] INFO: [Q] Quoted sender JID: 42907495039214@lid
+[2026-02-02T04:57:34.164Z] INFO: [Q] Quoted raw payload: Message { conversation: '🕌 *AYO SHOLAT*' }
+[2026-02-02T04:57:34.165Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: '3EB0717144744B8AC33F14',
+  participant: '42907495039214@lid',
+  quotedMessage: Message { conversation: '🕌 *AYO SHOLAT*' },
+  quotedType: 0
+}
+[2026-02-02T04:57:34.165Z] INFO: [Q] Resolved name: elruwet
+[2026-02-02T04:57:34.165Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:57:34.165Z] INFO: [Q] Remote JID (context): 42907495039214@lid
+[2026-02-02T04:57:39.466Z] INFO: [Q] No profile picture for: 42907495039214@lid
+[2026-02-02T04:57:39.466Z] INFO: [Q] Resolved text: 🕌 *AYO SHOLAT*
+[2026-02-02T04:57:39.466Z] INFO: [Q] Media detected: false
+[2026-02-02T04:57:39.466Z] INFO: [Q] Generated uniqueId: 1116763285
+[2026-02-02T04:57:49.830Z] INFO: [CMD] w from fahmy (6288975918875)
+[2026-02-02T04:57:52.166Z] INFO: [CMD] q from fahmy (6288975918875)
+[2026-02-02T04:57:52.807Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:57:52.807Z] INFO: [Q] Remote JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:57:52.807Z] INFO: [Q] Sender: 6288975918875@s.whatsapp.net
+[2026-02-02T04:57:52.807Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:57:52.807Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:57:52.807Z] INFO: [Q] Quoted sender JID: 6288975918875@s.whatsapp.net
+[2026-02-02T04:57:52.808Z] INFO: [Q] Quoted raw payload: Message { conversation: 'Gk jls kwe ceh' }
+[2026-02-02T04:57:52.808Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'A5DA53B6AB418EA80B13625AF55F1980',
+  participant: '6288975918875@s.whatsapp.net',
+  quotedMessage: Message { conversation: 'Gk jls kwe ceh' },
+  quotedType: 0
+}
+[2026-02-02T04:57:53.115Z] INFO: [Q] Resolved name: +6288975918875
+[2026-02-02T04:57:53.115Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:57:53.115Z] INFO: [Q] Remote JID (context): 6288975918875@s.whatsapp.net
+[2026-02-02T04:57:53.412Z] INFO: [Q] Resolved text: Gk jls kwe ceh
+[2026-02-02T04:57:53.412Z] INFO: [Q] Media detected: false
+[2026-02-02T04:57:53.412Z] INFO: [Q] Generated uniqueId: 1653118809
+[2026-02-02T04:58:08.266Z] INFO: [CMD] q from fahmy (628895437448)
+[2026-02-02T04:58:09.106Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:58:09.106Z] INFO: [Q] Remote JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:58:09.106Z] INFO: [Q] Sender: 628895437448@s.whatsapp.net
+[2026-02-02T04:58:09.106Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:58:09.106Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:58:09.106Z] INFO: [Q] Quoted sender JID: 628895437448@s.whatsapp.net
+[2026-02-02T04:58:09.107Z] INFO: [Q] Quoted raw payload: Message {
+  extendedTextMessage: ExtendedTextMessage {
+    endCardTiles: [],
+    text: 'yang jls',
+    contextInfo: ContextInfo {
+      mentionedJid: [],
+      groupMentions: [],
+      statusAttributions: [],
+      expiration: 0,
+      ephemeralSettingTimestamp: Long { low: 1758712679, high: 0, unsigned: false },
+      disappearingMode: DisappearingMode {
+        initiator: 0,
+        trigger: 1,
+        initiatedByMe: true
+      }
+    }
+  }
+}
+[2026-02-02T04:58:09.107Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: '3A584F3B65FB76D78A99',
+  participant: '628895437448@s.whatsapp.net',
+  quotedMessage: Message {
+    extendedTextMessage: ExtendedTextMessage {
+      endCardTiles: [],
+      text: 'yang jls',
+      contextInfo: ContextInfo {
+        mentionedJid: [],
+        groupMentions: [],
+        statusAttributions: [],
+        expiration: 0,
+        ephemeralSettingTimestamp: Long { low: 1758712679, high: 0, unsigned: false },
+        disappearingMode: DisappearingMode {
+          initiator: 0,
+          trigger: 1,
+          initiatedByMe: true
+        }
+      }
+    }
+  },
+  expiration: 0,
+  ephemeralSettingTimestamp: Long { low: 1758712679, high: 0, unsigned: false },
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 1, initiatedByMe: true },
+  quotedType: 0
+}
+[2026-02-02T04:58:09.107Z] INFO: [Q] Resolved name: saskia rara
+[2026-02-02T04:58:09.107Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:58:09.107Z] INFO: [Q] Remote JID (context): 628895437448@s.whatsapp.net
+[2026-02-02T04:58:09.639Z] INFO: [Q] Resolved text: yang jls
+[2026-02-02T04:58:09.639Z] INFO: [Q] Media detected: false
+[2026-02-02T04:58:09.639Z] INFO: [Q] Generated uniqueId: 1653118275
+[2026-02-02T04:58:42.999Z] INFO: [CMD] q from fahmy (628895304656)
+[2026-02-02T04:58:43.678Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:58:43.678Z] INFO: [Q] Remote JID: 628895304656@s.whatsapp.net
+[2026-02-02T04:58:43.678Z] INFO: [Q] Sender: 628895304656@s.whatsapp.net
+[2026-02-02T04:58:43.678Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:58:43.678Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:58:43.678Z] INFO: [Q] Quoted sender JID: 628895304656@s.whatsapp.net
+[2026-02-02T04:58:43.678Z] INFO: [Q] Quoted raw payload: Message { conversation: 'Jikok engko sore ae' }
+[2026-02-02T04:58:43.678Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'AC49A7CD63E56500FFCEAC0964B55591',
+  participant: '628895304656@s.whatsapp.net',
+  quotedMessage: Message { conversation: 'Jikok engko sore ae' },
+  quotedType: 0
+}
+[2026-02-02T04:58:44.004Z] INFO: [Q] Resolved name: +628895304656
+[2026-02-02T04:58:44.004Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:58:44.004Z] INFO: [Q] Remote JID (context): 628895304656@s.whatsapp.net
+[2026-02-02T04:58:44.309Z] INFO: [Q] Resolved text: Jikok engko sore ae
+[2026-02-02T04:58:44.309Z] INFO: [Q] Media detected: false
+[2026-02-02T04:58:44.309Z] INFO: [Q] Generated uniqueId: 1653118256
+[2026-02-02T04:58:59.904Z] INFO: [STORE] Updated contact: 62882008107830@s.whatsapp.net → Adi
+[2026-02-02T04:59:11.175Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T04:59:14.194Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:59:14.194Z] INFO: [Q] Remote JID: 120363031779586280@g.us
+[2026-02-02T04:59:14.194Z] INFO: [Q] Sender: 257655222313007@lid
+[2026-02-02T04:59:14.194Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:59:14.194Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:59:14.194Z] INFO: [Q] Quoted sender JID: 102293823332537@lid
+[2026-02-02T04:59:14.194Z] INFO: [Q] Quoted raw payload: Message {
+  extendedTextMessage: ExtendedTextMessage {
+    endCardTiles: [],
+    text: 'pakai remini terlalu kelihatan kalau di hd in',
+    contextInfo: ContextInfo {
+      mentionedJid: [],
+      groupMentions: [],
+      statusAttributions: [],
+      expiration: 86400,
+      disappearingMode: DisappearingMode {
+        initiator: 0,
+        trigger: 1,
+        initiatedByMe: false
+      }
+    }
+  }
+}
+[2026-02-02T04:59:14.195Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'AC0A01E2D5EB235EFC8BD0FFEC250965',
+  participant: '102293823332537@lid',
+  quotedMessage: Message {
+    extendedTextMessage: ExtendedTextMessage {
+      endCardTiles: [],
+      text: 'pakai remini terlalu kelihatan kalau di hd in',
+      contextInfo: ContextInfo {
+        mentionedJid: [],
+        groupMentions: [],
+        statusAttributions: [],
+        expiration: 86400,
+        disappearingMode: DisappearingMode {
+          initiator: 0,
+          trigger: 1,
+          initiatedByMe: false
+        }
+      }
+    }
+  },
+  expiration: 86400,
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 1, initiatedByMe: false },
+  quotedType: 0
+}
+[2026-02-02T04:59:14.961Z] INFO: [STORE] Updated contact: 102293823332537@lid → 102293823332537
+[2026-02-02T04:59:14.961Z] INFO: [Q] Resolved name: 102293823332537
+[2026-02-02T04:59:14.962Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:59:14.962Z] INFO: [Q] Remote JID (context): 120363031779586280@g.us
+[2026-02-02T04:59:15.204Z] INFO: [Q] Resolved text: pakai remini terlalu kelihatan kalau di hd in
+[2026-02-02T04:59:15.204Z] INFO: [Q] Media detected: false
+[2026-02-02T04:59:15.204Z] INFO: [Q] Generated uniqueId: 270701442
+[2026-02-02T04:59:24.974Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T04:59:25.404Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T04:59:25.404Z] INFO: [Q] Remote JID: 120363031779586280@g.us
+[2026-02-02T04:59:25.404Z] INFO: [Q] Sender: 257655222313007@lid
+[2026-02-02T04:59:25.404Z] INFO: [Q] Command args: (none)
+[2026-02-02T04:59:25.404Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T04:59:25.404Z] INFO: [Q] Quoted sender JID: 228531502088251@lid
+[2026-02-02T04:59:25.405Z] INFO: [Q] Quoted raw payload: Message {
+  extendedTextMessage: ExtendedTextMessage {
+    endCardTiles: [],
+    text: 'Haiii Teman Teman 👋👋\n' +
+      '\n' +
+      'Sudah jam 11:56 WIB nih... SHOLAT DZUHUR YOKKK\n' +
+      '\n' +
+      'Note: Jam mengikuti waktu sholat *Yogyakarta*',
+    contextInfo: ContextInfo {
+      mentionedJid: [],
+      groupMentions: [],
+      statusAttributions: [],
+      expiration: 86400,
+      externalAdReply: ExternalAdReplyInfo {
+        title: 'SHOLAT DZUHUR YOKKK',
+        mediaType: 1,
+        mediaUrl: 'https://awsimages.detik.net.id/community/media/visual/2022/07/18/ilustrasi-ahli-ibadah_169.jpeg?w=600&q=90',
+        thumbnail: <Buffer >,
+        sourceUrl: '',
+        renderLargerThumbnail: true,
+        showAdAttribution: false
+      },
+      disappearingMode: DisappearingMode {
+        initiator: 0,
+        trigger: 1,
+        initiatedByMe: false
+      }
+    }
+  }
+}
+[2026-02-02T04:59:25.405Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: '3EB087833AB1633CB98205',
+  participant: '228531502088251@lid',
+  quotedMessage: Message {
+    extendedTextMessage: ExtendedTextMessage {
+      endCardTiles: [],
+      text: 'Haiii Teman Teman 👋👋\n' +
+        '\n' +
+        'Sudah jam 11:56 WIB nih... SHOLAT DZUHUR YOKKK\n' +
+        '\n' +
+        'Note: Jam mengikuti waktu sholat *Yogyakarta*',
+      contextInfo: ContextInfo {
+        mentionedJid: [],
+        groupMentions: [],
+        statusAttributions: [],
+        expiration: 86400,
+        externalAdReply: ExternalAdReplyInfo {
+          title: 'SHOLAT DZUHUR YOKKK',
+          mediaType: 1,
+          mediaUrl: 'https://awsimages.detik.net.id/community/media/visual/2022/07/18/ilustrasi-ahli-ibadah_169.jpeg?w=600&q=90',
+          thumbnail: <Buffer >,
+          sourceUrl: '',
+          renderLargerThumbnail: true,
+          showAdAttribution: false
+        },
+        disappearingMode: DisappearingMode {
+          initiator: 0,
+          trigger: 1,
+          initiatedByMe: false
+        }
+      }
+    }
+  },
+  expiration: 86400,
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 1, initiatedByMe: false },
+  quotedType: 0
+}
+[2026-02-02T04:59:25.405Z] INFO: [Q] Resolved name: Yannn Labs
+[2026-02-02T04:59:25.405Z] INFO: [Q] Context pushName: -
+[2026-02-02T04:59:25.405Z] INFO: [Q] Remote JID (context): 120363031779586280@g.us
+[2026-02-02T04:59:25.885Z] INFO: [Q] Resolved text: Haiii Teman Teman 👋👋
+
+Sudah jam 11:56 WIB nih... SHOLAT DZUHUR YOKKK
+
+Note: Jam mengikuti waktu sholat *Yogyakarta*
+[2026-02-02T04:59:25.885Z] INFO: [Q] Media detected: false
+[2026-02-02T04:59:25.886Z] INFO: [Q] Generated uniqueId: 579154256
+[2026-02-02T05:00:40.762Z] INFO: [STORE] Updated contact: 166997337849872@lid → cella
+[2026-02-02T05:00:54.374Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:00:54.705Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T05:00:54.705Z] INFO: [Q] Remote JID: 120363031779586280@g.us
+[2026-02-02T05:00:54.705Z] INFO: [Q] Sender: 257655222313007@lid
+[2026-02-02T05:00:54.705Z] INFO: [Q] Command args: (none)
+[2026-02-02T05:00:54.705Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T05:00:54.705Z] INFO: [Q] Quoted sender JID: 166997337849872@lid
+[2026-02-02T05:00:54.705Z] INFO: [Q] Quoted raw payload: Message {
+  extendedTextMessage: ExtendedTextMessage {
+    endCardTiles: [],
+    text: 'hay',
+    contextInfo: ContextInfo {
+      mentionedJid: [],
+      groupMentions: [],
+      statusAttributions: [],
+      expiration: 86400,
+      disappearingMode: DisappearingMode {
+        initiator: 0,
+        trigger: 1,
+        initiatedByMe: false
+      }
+    }
+  }
+}
+[2026-02-02T05:00:54.705Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'AC2FEC90D3C70AF9AFE660590B843F37',
+  participant: '166997337849872@lid',
+  quotedMessage: Message {
+    extendedTextMessage: ExtendedTextMessage {
+      endCardTiles: [],
+      text: 'hay',
+      contextInfo: ContextInfo {
+        mentionedJid: [],
+        groupMentions: [],
+        statusAttributions: [],
+        expiration: 86400,
+        disappearingMode: DisappearingMode {
+          initiator: 0,
+          trigger: 1,
+          initiatedByMe: false
+        }
+      }
+    }
+  },
+  expiration: 86400,
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 1, initiatedByMe: false },
+  quotedType: 0
+}
+[2026-02-02T05:00:54.705Z] INFO: [Q] Resolved name: cella
+[2026-02-02T05:00:54.705Z] INFO: [Q] Context pushName: -
+[2026-02-02T05:00:54.705Z] INFO: [Q] Remote JID (context): 120363031779586280@g.us
+[2026-02-02T05:00:55.115Z] INFO: [Q] Resolved text: hay
+[2026-02-02T05:00:55.115Z] INFO: [Q] Media detected: false
+[2026-02-02T05:00:55.116Z] INFO: [Q] Generated uniqueId: 376018739
+[2026-02-02T05:01:31.655Z] INFO: [STORE] Updated contact: 128290689970412@lid → Alvian
+[2026-02-02T05:01:38.145Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:01:38.475Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T05:01:38.475Z] INFO: [Q] Remote JID: 120363031779586280@g.us
+[2026-02-02T05:01:38.475Z] INFO: [Q] Sender: 257655222313007@lid
+[2026-02-02T05:01:38.475Z] INFO: [Q] Command args: (none)
+[2026-02-02T05:01:38.475Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T05:01:38.475Z] INFO: [Q] Quoted sender JID: 128290689970412@lid
+[2026-02-02T05:01:38.476Z] INFO: [Q] Quoted raw payload: Message {
+  stickerMessage: StickerMessage {
+    url: 'https://mmg.whatsapp.net/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0&mms3=true',
+    fileSha256: Uint8Array(32) [
+      204, 204, 121, 166, 190, 65,
+      115, 223, 112, 219, 105, 58,
+      169, 248, 188,  99, 157, 63,
+      176,   5,
+      ... 12 more items
+    ],
+    fileEncSha256: Uint8Array(32) [
+      228,  28,  17,  38, 243,  16,
+      102,  34, 231,  23, 105, 219,
+      146, 245,  89, 182,  46, 215,
+      181, 136,
+      ... 12 more items
+    ],
+    mediaKey: Uint8Array(32) [
+       11,  11,  17, 251, 202, 124,
+      206, 147, 238, 214,  14, 197,
+      171, 188,  69, 223, 205, 100,
+       71, 159,
+      ... 12 more items
+    ],
+    mimetype: 'image/webp',
+    directPath: '/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0',
+    fileLength: Long { low: 20296, high: 0, unsigned: true },
+    mediaKeyTimestamp: Long { low: 1769948982, high: 0, unsigned: false },
+    isAnimated: false,
+    contextInfo: ContextInfo {
+      mentionedJid: [],
+      groupMentions: [],
+      statusAttributions: [],
+      expiration: 86400,
+      disappearingMode: DisappearingMode {
+        initiator: 0,
+        trigger: 1,
+        initiatedByMe: false
+      }
+    },
+    stickerSentTs: Long { low: 481963256, high: 412, unsigned: false },
+    isAvatar: false,
+    isAiSticker: false,
+    isLottie: false,
+    accessibilityLabel: ''
+  }
+}
+[2026-02-02T05:01:38.476Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'ACFD3C10130CE15CCA7B1232A38BBC1D',
+  participant: '128290689970412@lid',
+  quotedMessage: Message {
+    stickerMessage: StickerMessage {
+      url: 'https://mmg.whatsapp.net/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0&mms3=true',
+      fileSha256: Uint8Array(32) [
+        204, 204, 121, 166, 190, 65,
+        115, 223, 112, 219, 105, 58,
+        169, 248, 188,  99, 157, 63,
+        176,   5,
+        ... 12 more items
+      ],
+      fileEncSha256: Uint8Array(32) [
+        228,  28,  17,  38, 243,  16,
+        102,  34, 231,  23, 105, 219,
+        146, 245,  89, 182,  46, 215,
+        181, 136,
+        ... 12 more items
+      ],
+      mediaKey: Uint8Array(32) [
+         11,  11,  17, 251, 202, 124,
+        206, 147, 238, 214,  14, 197,
+        171, 188,  69, 223, 205, 100,
+         71, 159,
+        ... 12 more items
+      ],
+      mimetype: 'image/webp',
+      directPath: '/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0',
+      fileLength: Long { low: 20296, high: 0, unsigned: true },
+      mediaKeyTimestamp: Long { low: 1769948982, high: 0, unsigned: false },
+      isAnimated: false,
+      contextInfo: ContextInfo {
+        mentionedJid: [],
+        groupMentions: [],
+        statusAttributions: [],
+        expiration: 86400,
+        disappearingMode: DisappearingMode {
+          initiator: 0,
+          trigger: 1,
+          initiatedByMe: false
+        }
+      },
+      stickerSentTs: Long { low: 481963256, high: 412, unsigned: false },
+      isAvatar: false,
+      isAiSticker: false,
+      isLottie: false,
+      accessibilityLabel: ''
+    }
+  },
+  expiration: 86400,
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 1, initiatedByMe: false },
+  quotedType: 0
+}
+[2026-02-02T05:01:38.477Z] INFO: [Q] Resolved name: Alvian
+[2026-02-02T05:01:38.477Z] INFO: [Q] Context pushName: -
+[2026-02-02T05:01:38.477Z] INFO: [Q] Remote JID (context): 120363031779586280@g.us
+[2026-02-02T05:01:39.132Z] INFO: [Q] Resolved text: (empty)
+[2026-02-02T05:01:39.587Z] INFO: [Q] Media detected: true
+[2026-02-02T05:01:39.588Z] INFO: [Q] Generated uniqueId: 310546536
+[2026-02-02T05:01:39.631Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:01:49.365Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:01:49.777Z] INFO: [Q] ===== DEBUG INFO =====
+[2026-02-02T05:01:49.777Z] INFO: [Q] Remote JID: 120363031779586280@g.us
+[2026-02-02T05:01:49.777Z] INFO: [Q] Sender: 257655222313007@lid
+[2026-02-02T05:01:49.777Z] INFO: [Q] Command args: (none)
+[2026-02-02T05:01:49.777Z] INFO: [Q] Message type: extendedTextMessage
+[2026-02-02T05:01:49.777Z] INFO: [Q] Quoted sender JID: 128290689970412@lid
+[2026-02-02T05:01:49.777Z] INFO: [Q] Quoted raw payload: Message {
+  stickerMessage: StickerMessage {
+    url: 'https://mmg.whatsapp.net/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0&mms3=true',
+    fileSha256: Uint8Array(32) [
+      204, 204, 121, 166, 190, 65,
+      115, 223, 112, 219, 105, 58,
+      169, 248, 188,  99, 157, 63,
+      176,   5,
+      ... 12 more items
+    ],
+    fileEncSha256: Uint8Array(32) [
+      228,  28,  17,  38, 243,  16,
+      102,  34, 231,  23, 105, 219,
+      146, 245,  89, 182,  46, 215,
+      181, 136,
+      ... 12 more items
+    ],
+    mediaKey: Uint8Array(32) [
+       11,  11,  17, 251, 202, 124,
+      206, 147, 238, 214,  14, 197,
+      171, 188,  69, 223, 205, 100,
+       71, 159,
+      ... 12 more items
+    ],
+    mimetype: 'image/webp',
+    directPath: '/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0',
+    fileLength: Long { low: 20296, high: 0, unsigned: true },
+    mediaKeyTimestamp: Long { low: 1769948982, high: 0, unsigned: false },
+    isAnimated: false,
+    contextInfo: ContextInfo {
+      mentionedJid: [],
+      groupMentions: [],
+      statusAttributions: [],
+      expiration: 86400,
+      disappearingMode: DisappearingMode {
+        initiator: 0,
+        trigger: 1,
+        initiatedByMe: false
+      }
+    },
+    stickerSentTs: Long { low: 481963256, high: 412, unsigned: false },
+    isAvatar: false,
+    isAiSticker: false,
+    isLottie: false,
+    accessibilityLabel: ''
+  }
+}
+[2026-02-02T05:01:49.778Z] INFO: [Q] Context info: ContextInfo {
+  mentionedJid: [],
+  groupMentions: [],
+  statusAttributions: [],
+  stanzaId: 'ACFD3C10130CE15CCA7B1232A38BBC1D',
+  participant: '128290689970412@lid',
+  quotedMessage: Message {
+    stickerMessage: StickerMessage {
+      url: 'https://mmg.whatsapp.net/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0&mms3=true',
+      fileSha256: Uint8Array(32) [
+        204, 204, 121, 166, 190, 65,
+        115, 223, 112, 219, 105, 58,
+        169, 248, 188,  99, 157, 63,
+        176,   5,
+        ... 12 more items
+      ],
+      fileEncSha256: Uint8Array(32) [
+        228,  28,  17,  38, 243,  16,
+        102,  34, 231,  23, 105, 219,
+        146, 245,  89, 182,  46, 215,
+        181, 136,
+        ... 12 more items
+      ],
+      mediaKey: Uint8Array(32) [
+         11,  11,  17, 251, 202, 124,
+        206, 147, 238, 214,  14, 197,
+        171, 188,  69, 223, 205, 100,
+         71, 159,
+        ... 12 more items
+      ],
+      mimetype: 'image/webp',
+      directPath: '/v/t62.15575-24/553551763_2105770703576601_611367907550846071_n.enc?ccb=11-4&oh=01_Q5Aa3gHVizV5A7fei4DJxfvtlb9kHB5cpBfqYTxH8t5pbYAgVg&oe=69A79DD3&_nc_sid=5e03e0',
+      fileLength: Long { low: 20296, high: 0, unsigned: true },
+      mediaKeyTimestamp: Long { low: 1769948982, high: 0, unsigned: false },
+      isAnimated: false,
+      contextInfo: ContextInfo {
+        mentionedJid: [],
+        groupMentions: [],
+        statusAttributions: [],
+        expiration: 86400,
+        disappearingMode: DisappearingMode {
+          initiator: 0,
+          trigger: 1,
+          initiatedByMe: false
+        }
+      },
+      stickerSentTs: Long { low: 481963256, high: 412, unsigned: false },
+      isAvatar: false,
+      isAiSticker: false,
+      isLottie: false,
+      accessibilityLabel: ''
+    }
+  },
+  expiration: 86400,
+  disappearingMode: DisappearingMode { initiator: 0, trigger: 1, initiatedByMe: false },
+  quotedType: 0
+}
+[2026-02-02T05:01:49.778Z] INFO: [Q] Resolved name: Alvian
+[2026-02-02T05:01:49.778Z] INFO: [Q] Context pushName: -
+[2026-02-02T05:01:49.778Z] INFO: [Q] Remote JID (context): 120363031779586280@g.us
+[2026-02-02T05:01:50.698Z] INFO: [Q] Resolved text: (empty)
+[2026-02-02T05:01:51.070Z] INFO: [Q] Media detected: true
+[2026-02-02T05:01:51.071Z] INFO: [Q] Generated uniqueId: 310546536
+[2026-02-02T05:01:51.086Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:03:03.001Z] INFO: [STORE] Updated contact: 254348063957207@lid → saskia rara
+[2026-02-02T05:06:00.025Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops[0m
+[2026-02-02T05:06:00.027Z] INFO: [STORE] Loaded 10 contacts
+[2026-02-02T05:06:00.160Z] INFO: 📦 Loaded 16 features
+[2026-02-02T05:06:00.229Z] INFO: Emoji cache initialized for apple
+[2026-02-02T05:06:00.229Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T05:06:00.546Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T05:06:04.850Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T05:06:04.851Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T05:06:10.042Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:06:14.557Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:06:26.656Z] INFO: [STORE] Updated contact: 216634392326167@lid → Ferry
+[2026-02-02T05:06:30.398Z] INFO: [STORE] Updated contact: 40854232256633@lid → VerBotX
+[2026-02-02T05:11:01.011Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }[0m
+[2026-02-02T05:11:01.013Z] INFO: [STORE] Loaded 12 contacts
+[2026-02-02T05:11:01.141Z] INFO: 📦 Loaded 16 features
+[2026-02-02T05:11:01.209Z] INFO: Emoji cache initialized for apple
+[2026-02-02T05:11:01.209Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T05:11:01.528Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T05:11:04.549Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T05:11:04.550Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T05:11:19.640Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:11:21.574Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:11:41.443Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:11:42.351Z] INFO: [STORE] Updated contact: 257655222313007@lid → 257655222313007
+[2026-02-02T05:11:43.228Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:12:10.948Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:12:12.633Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:12:24.765Z] INFO: [STORE] Updated contact: 168964617461982@lid → noah
+[2026-02-02T05:13:17.997Z] INFO: [STORE] Updated contact: 13185851633741@lid → Salman Alfarisi
+[2026-02-02T05:13:26.593Z] INFO: [STORE] Updated contact: 33784246341816@lid → Ahmad Subhan Yazid
+[2026-02-02T05:15:06.265Z] INFO: [STORE] Updated contact: 120363400256991721@newsletter → Unknown
+[2026-02-02T05:17:09.955Z] INFO: [STORE] Updated contact: 152321099096271@lid → Unknown
+[2026-02-02T05:17:14.557Z] INFO: [STORE] Updated contact: 75965237579909@lid → Kenali Dirimu Sendiri
+[2026-02-02T05:18:03.822Z] INFO: [STORE] Updated contact: 6288286210808@s.whatsapp.net → Zahra✿⁠ ⁠♡(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠)
+[2026-02-02T05:18:59.930Z] INFO: [STORE] Updated contact: 75948108042449@lid → goblin
+[2026-02-02T05:19:17.640Z] INFO: [CMD] ts from fahmy (257655222313007)
+[2026-02-02T05:20:29.636Z] INFO: [STORE] Updated contact: 260021698973775@lid → Nitrojp
+[2026-02-02T05:21:41.422Z] INFO: [dotenv@17.2.3] injecting env (10) from .env [2m-- tip: ⚙️  write to custom object with { processEnv: myObject }[0m
+[2026-02-02T05:21:41.424Z] INFO: [STORE] Loaded 22 contacts
+[2026-02-02T05:21:41.554Z] INFO: 📦 Loaded 16 features
+[2026-02-02T05:21:41.626Z] INFO: Emoji cache initialized for apple
+[2026-02-02T05:21:41.626Z] INFO: Preloading 20 popular emojis...
+[2026-02-02T05:21:41.946Z] INFO: Preloaded 5/20 popular emojis
+[2026-02-02T05:21:45.806Z] INFO: 🚀 Artifical Intelegent (fahmyzzx) ready!
+[2026-02-02T05:21:45.807Z] INFO: 👑 Owner: 6285226166485
+[2026-02-02T05:22:07.672Z] INFO: [CMD] q from fahmy (257655222313007)
+[2026-02-02T05:22:10.551Z] INFO: Media tidak memiliki sumber (path/buffer), tidak dapat diunduh.
+[2026-02-02T05:22:27.097Z] INFO: [STORE] Updated contact: 6285124281144@s.whatsapp.net → !Pran.
+[2026-02-02T05:23:14.920Z] INFO: [STORE] Updated contact: 84851709485227@lid → Nadia
+[2026-02-02T05:23:47.288Z] INFO: [CMD] ai from fahmy (257655222313007)
+[2026-02-02T05:27:02.652Z] INFO: [STORE] Updated contact: 235055557402666@lid → Zen
+[2026-02-02T05:28:28.978Z] INFO: [STORE] Updated contact: 6282138483881@s.whatsapp.net → *
+[2026-02-02T05:28:42.880Z] INFO: [CMD] q from fahmy (6288975918875)

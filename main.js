@@ -31,6 +31,7 @@ const AppError = require('./utils/AppError');
 
 // Initialize Store Service
 const storeService = new StoreService();
+global.__STORE_SERVICE__ = storeService;
 // Initialize Rate Limit Service (max 5 commands per minute per user)
 const rateLimitService = new RateLimitService(60000, 5);
 // Initialize AFK Service
@@ -57,9 +58,10 @@ async function connectToWhatsApp() {
       creds: state.creds,
       keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
     },
-    browser: ['Artifical Intelegent (fahmyzzx) v1', 'Chrome', '3.0'],
+    browser: ['Botwa DEV Mode v1', 'Chrome', '3.0'],
     markOnlineOnConnect: true
   });
+  storeService.attachSocket(sock);
 
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
@@ -77,6 +79,7 @@ async function connectToWhatsApp() {
     } else if (connection === 'open') {
       console.log('🚀 Artifical Intelegent (fahmyzzx) ready!');
       console.log(`👑 Owner: ${config.ownerNumber}`);
+      await storeService.registerSelf(sock);
     }
   });
 
@@ -86,6 +89,8 @@ async function connectToWhatsApp() {
       if (type !== 'notify') return;
       const m = messages[0];
       if (!m || !m.message) return;
+
+      storeService.captureMessage(m);
 
     try {
 
@@ -98,16 +103,30 @@ async function connectToWhatsApp() {
         sender, 
         pushName, 
         isGroup, 
-        remoteJid 
+        remoteJid,
+        contextInfo,
+        quotedSender
       } = parsed;
 
+      const isFromMe = m.key.fromMe;
+
       // 2. Save Contacts
-      if (sender && pushName) {
-        storeService.addContact(sender, pushName);
+      if (sender && pushName && !isFromMe) {
+        await storeService.captureContact(sender, pushName);
+      }
+
+      const quotedContextJid = quotedSender 
+        || contextInfo?.participant 
+        || contextInfo?.remoteJid 
+        || (isGroup ? null : remoteJid);
+
+      if (quotedContextJid) {
+        await storeService.captureContact(quotedContextJid, contextInfo?.pushName, {
+          additionalJids: contextInfo?.mentionedJid || []
+        });
       }
 
       // 3. Check Owner & Permissions (MOVED UP)
-      const isFromMe = m.key.fromMe;
       // Fix owner checking - handle both @s.whatsapp.net and @lid formats
       const normalizedSender = sender.replace('@s.whatsapp.net', '').replace('@lid', '');
       const isOwner = isFromMe || normalizedSender === config.ownerNumber;

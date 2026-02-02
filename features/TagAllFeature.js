@@ -1,5 +1,6 @@
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
+const Helper = require('../utils/helper');
 
 class TagAllFeature {
     constructor() {
@@ -17,49 +18,80 @@ class TagAllFeature {
         // 2. Ambil metadata grup & partisipan
         const groupMetadata = await sock.groupMetadata(parsed.remoteJid);
         const participants = groupMetadata.participants;
-        const mentions = participants.map(p => p.id);
+        const mentions = participants.map((p) => p.id);
 
-        // 3. Ambil argumen pesan (pesan setelah command) - Pake parsed.argText
-        let text = parsed.argText;
-
-        // 4. Cek apakah ada reply message (quoted)
+        // 3. Persiapkan isi pengumuman
+        const reason = (parsed.argText || '').trim();
         const quoted = parsed.quoted;
 
-        if (quoted) {
-            // Jika user me-reply pesan seseorang, kita ambil konten pesan yg di-reply
-            const quotedText = quoted.conversation ||
-                quoted.extendedTextMessage?.text ||
-                quoted.imageMessage?.caption ||
-                quoted.videoMessage?.caption ||
-                '_Media Message_';
+        const quotedText = quoted?.conversation ||
+            quoted?.extendedTextMessage?.text ||
+            quoted?.extendedTextMessage?.matchedText ||
+            quoted?.imageMessage?.caption ||
+            quoted?.videoMessage?.caption ||
+            quoted?.documentMessage?.caption ||
+            quoted?.documentMessage?.fileName ||
+            '';
 
-            // Jika user tidak menulis pesan tambahan, pakai default
-            text = text || Formatter.bold('PERHATIAN!');
+        const headerLine = reason
+            ? `${Formatter.bold('Pengumuman')}: ${reason}`
+            : Formatter.bold('Pengumuman');
 
-            let message = `${text}\n\n`;
-            message += `━━━━━━━━━━━━━━━\n`;
-            message += `${quotedText}\n`;
-            message += `━━━━━━━━━━━━━━━\n\n`;
+        const mentionLines = mentions.map((jid) => `@${jid.split('@')[0]}`).join('\n');
 
-            message += mentions.map(jid => `@${jid.split('@')[0]}`).join('\n');
+        const captionParts = [headerLine];
 
-            await sock.sendMessage(parsed.remoteJid, {
-                text: message,
-                mentions: mentions
-            });
-
-        } else {
-            // Jika tidak ada reply
-            text = text || Formatter.bold('TAG ALL');
-
-            let message = `${text}\n\n`;
-            message += mentions.map(jid => `@${jid.split('@')[0]}`).join('\n');
-
-            await sock.sendMessage(parsed.remoteJid, {
-                text: message,
-                mentions: mentions
-            });
+        if (quotedText) {
+            captionParts.push('');
+            captionParts.push(Formatter.quote(quotedText));
         }
+
+        if (mentionLines) {
+            captionParts.push('');
+            captionParts.push(mentionLines);
+        }
+
+        const caption = captionParts.join('\n');
+
+        if (quoted?.imageMessage) {
+            const buffer = await Helper.downloadMedia(quoted.imageMessage, 'image');
+            await sock.sendMessage(parsed.remoteJid, {
+                image: buffer,
+                mimetype: quoted.imageMessage.mimetype,
+                caption,
+                mentions
+            }, { quoted: m });
+            return;
+        }
+
+        if (quoted?.videoMessage) {
+            const buffer = await Helper.downloadMedia(quoted.videoMessage, 'video');
+            await sock.sendMessage(parsed.remoteJid, {
+                video: buffer,
+                mimetype: quoted.videoMessage.mimetype,
+                caption,
+                mentions,
+                gifPlayback: quoted.videoMessage.gifPlayback || false
+            }, { quoted: m });
+            return;
+        }
+
+        if (quoted?.documentMessage) {
+            const buffer = await Helper.downloadMedia(quoted.documentMessage, 'document');
+            await sock.sendMessage(parsed.remoteJid, {
+                document: buffer,
+                fileName: quoted.documentMessage.fileName || 'document',
+                mimetype: quoted.documentMessage.mimetype,
+                caption,
+                mentions
+            }, { quoted: m });
+            return;
+        }
+
+        await sock.sendMessage(parsed.remoteJid, {
+            text: caption,
+            mentions
+        }, { quoted: m });
     }
 }
 

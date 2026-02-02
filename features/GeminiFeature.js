@@ -63,7 +63,7 @@ class GeminiFeature {
     if (isImageRequest) {
         modelId = 'gemini-3-pro-image-preview';
         generationConfig.imageConfig = {
-            aspectRatio: "1:1",
+            aspectRatio: "4:3",
             imageSize: "2K"
         };
     } else {

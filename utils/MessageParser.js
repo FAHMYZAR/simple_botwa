@@ -22,9 +22,9 @@ class MessageParser {
     body = body || ''; // ensure string
 
     // 2. Extract Quoted Message (Context)
-    const contextInfo = content?.contextInfo || {};
-    const quoted = contextInfo.quotedMessage || null;
-    const quotedSender = contextInfo.participant || null;
+    const contextInfo = content?.contextInfo || null;
+    const quoted = contextInfo?.quotedMessage || null;
+    const quotedSender = contextInfo?.participant || null;
 
     // 3. Sender Info
     const sender = m.key.participant || m.key.remoteJid;
@@ -69,7 +69,8 @@ class MessageParser {
       remoteJid: m.key.remoteJid,
       quoted,
       quotedSender,
-      mentions: contextInfo.mentionedJid || []
+      contextInfo,
+      mentions: contextInfo?.mentionedJid || []
     };
   }
 }

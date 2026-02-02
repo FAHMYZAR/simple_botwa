@@ -2,14 +2,64 @@ const { QuoteGenerator } = require('qc-generator-whatsapp');
 const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 const sharp = require('sharp');
 const axios = require('axios');
-const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
+const storeService = require('../services/StoreServiceSingleton');
 
 class QuoteStickerFeature {
     constructor() {
         this.name = 'q';
         this.description = '_Reply quotly pesan_';
         this.ownerOnly = false;
+    }
+
+    static unwrapQuotedMessage(message) {
+        if (!message) {
+            return null;
+        }
+
+        let current = message;
+
+        while (current) {
+            if (current.ephemeralMessage?.message) {
+                current = current.ephemeralMessage.message;
+                continue;
+            }
+
+            if (current.viewOnceMessage?.message) {
+                current = current.viewOnceMessage.message;
+                continue;
+            }
+
+            if (current.viewOnceMessageV2?.message) {
+                current = current.viewOnceMessageV2.message;
+                continue;
+            }
+
+            if (current.viewOnceMessageV2Extension?.message) {
+                current = current.viewOnceMessageV2Extension.message;
+                continue;
+            }
+
+            return current;
+        }
+
+        return null;
+    }
+
+    static pickMediaSource(content) {
+        if (!content) {
+            return null;
+        }
+
+        if (content.imageMessage) {
+            return { type: 'imageMessage', payload: content.imageMessage };
+        }
+
+        if (content.stickerMessage) {
+            return { type: 'stickerMessage', payload: content.stickerMessage };
+        }
+
+        return null;
     }
 
     async execute(m, sock, parsed) {
@@ -26,36 +76,27 @@ class QuoteStickerFeature {
 
         // Get quoted sender JID
         const quotedSender = parsed.quotedSender || (isGroup ? contextInfo?.participant : parsed.remoteJid);
-        
-        console.log('[Q] ===== DEBUG INFO =====');
-        console.log('[Q] Remote JID:', parsed.remoteJid);
-        console.log('[Q] Quoted sender JID:', quotedSender);
-        
-        // Get name - PRIORITAS: store > pushName > WA API
-        let name;
+        const quotedMessage = QuoteStickerFeature.unwrapQuotedMessage(quoted);
 
-        // Helper: cari di store
-        const findInStore = (jid) => {
-            let storeContacts = {};
-            try {
-                const fs = require('fs');
-                if (fs.existsSync('./baileys_store.json')) {
-                    const data = JSON.parse(fs.readFileSync('./baileys_store.json', 'utf-8'));
-                    storeContacts = data.contacts || {};
-                }
-            } catch (e) { }
+        if (!quotedMessage) {
+            throw new AppError('Tidak bisa membaca pesan yang di-reply. Coba ulangi.');
+        }
 
-            if (storeContacts[jid]?.name) return storeContacts[jid].name;
-            const number = jid.split('@')[0];
-            for (const [key, contact] of Object.entries(storeContacts)) {
-                if (key.split('@')[0] === number && contact.name) return contact.name;
+        const stanzaId = contextInfo?.stanzaId;
+        let storedMessage;
+        if (stanzaId) {
+            const storedEntry = storeService.findMessage(parsed.remoteJid, stanzaId);
+            if (storedEntry?.message) {
+                storedMessage = QuoteStickerFeature.unwrapQuotedMessage(storedEntry.message);
             }
-            return null;
-        };
+        }
 
-        name = findInStore(quotedSender);
-        if (!name && contextInfo?.pushName) name = contextInfo.pushName;
-        if (!name) name = quotedSender.split('@')[0];
+        const textSource = quotedMessage || storedMessage || {};
+
+        const name = await storeService.resolveName(quotedSender, {
+            pushName: contextInfo?.pushName,
+            remoteJid: parsed.remoteJid
+        });
 
         // Get profile picture
         let ppBuffer = null;
@@ -68,34 +109,42 @@ class QuoteStickerFeature {
                 });
                 ppBuffer = await sharp(Buffer.from(response.data)).resize(100, 100).png().toBuffer();
             }
-        } catch (e) {
-            console.log('[Q] No profile picture for:', quotedSender);
+        } catch (error) {
+            // Ignore missing or inaccessible profile pictures
         }
 
         // Get text
-        const text = quoted.conversation ||
-            quoted.extendedTextMessage?.text ||
-            quoted.imageMessage?.caption ||
-            quoted.stickerMessage?.caption ||
+        const text = textSource.conversation ||
+            textSource.extendedTextMessage?.text ||
+            textSource.imageMessage?.caption ||
+            textSource.stickerMessage?.caption ||
             '';
 
         // Get media if exists
-        let mediaBuffer = null;
-        if (quoted.imageMessage) {
-            mediaBuffer = await downloadMediaMessage(
-                { message: { imageMessage: quoted.imageMessage } },
+        let mediaDataUrl = null;
+        let mediaSource = QuoteStickerFeature.pickMediaSource(quotedMessage);
+        if (!mediaSource && storedMessage) {
+            mediaSource = QuoteStickerFeature.pickMediaSource(storedMessage);
+        }
+
+        if (mediaSource?.type === 'imageMessage') {
+            const mediaBuffer = await downloadMediaMessage(
+                { message: { imageMessage: mediaSource.payload } },
                 'buffer',
                 {},
                 { logger: console, reuploadRequest: sock.updateMediaMessage }
             );
-        } else if (quoted.stickerMessage) {
+            const mimeType = mediaSource.payload.mimetype || 'image/jpeg';
+            mediaDataUrl = `data:${mimeType};base64,${mediaBuffer.toString('base64')}`;
+        } else if (mediaSource?.type === 'stickerMessage') {
             const stickerBuffer = await downloadMediaMessage(
-                { message: { stickerMessage: quoted.stickerMessage } },
+                { message: { stickerMessage: mediaSource.payload } },
                 'buffer',
                 {},
                 { logger: console, reuploadRequest: sock.updateMediaMessage }
             );
-            mediaBuffer = await sharp(stickerBuffer).png().toBuffer();
+            const pngBuffer = await sharp(stickerBuffer).png().toBuffer();
+            mediaDataUrl = `data:image/png;base64,${pngBuffer.toString('base64')}`;
         }
 
         // Generate unique ID
@@ -120,23 +169,26 @@ class QuoteStickerFeature {
                             url: ppBuffer ? `data:image/png;base64,${ppBuffer.toString('base64')}` : 'https://i.ibb.co/2ds00c5/blank-profile.png',
                         }
                     },
-                    text: text,
+                    text,
                     replyMessage: {},
-                    media: mediaBuffer ? {
-                        url: `data:image/png;base64,${mediaBuffer.toString('base64')}`,
+                    media: mediaDataUrl ? {
+                        url: mediaDataUrl,
                     } : undefined
                 }
             ]
         };
 
-        const generator = new QuoteGenerator();
-        const quoteBuffer = await generator.generate(params);
+        const quoteResult = await QuoteGenerator(params);
 
-        if (!quoteBuffer) {
+        if (quoteResult?.error) {
+            throw new AppError(`Gagal generate stiker: ${quoteResult.error}`);
+        }
+
+        if (!quoteResult || !quoteResult.image) {
             throw new AppError('Gagal generate stiker');
         }
 
-        const sticker = await sharp(quoteBuffer)
+        const sticker = await sharp(quoteResult.image)
             .resize(512, 512, {
                 fit: 'contain',
                 background: { r: 0, g: 0, b: 0, alpha: 0 }
