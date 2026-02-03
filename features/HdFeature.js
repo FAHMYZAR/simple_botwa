@@ -31,11 +31,11 @@ class HdFeature {
             throw new AppError('Document harus berupa video!');
         }
 
-        // Cek ukuran file (max 250MB)
+        // Cek ukuran file (max 450MB)
         const fileSize = documentMessage.fileLength || 0;
         const sizeInMB = fileSize / (1024 * 1024);
 
-        if (sizeInMB > 250) {
+        if (sizeInMB > 450) {
             throw new AppError(`Video terlalu besar! (${sizeInMB.toFixed(2)} MB)\nMaksimal 250 MB.`);
         }
 
