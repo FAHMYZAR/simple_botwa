@@ -17,5 +17,9 @@ module.exports = {
       apiKey: process.env.TELEGRAM_STICKER_API_KEY,
       endpoint: process.env.TELEGRAM_STICKER_API_URL || 'https://api.ferdev.my.id/sticker/telestick'
     }
+  },
+  mistral: {
+    apiKey: process.env.MISTRAL_API_KEY,
+    model: process.env.MISTRAL_MODEL || 'mistral-large-latest'
   }
 };
