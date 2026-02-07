@@ -1,12 +1,15 @@
 const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
+const path = require('path');
 const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 const config = require('../config/config');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
 
 const DEFAULT_TIMEOUT_MS = 60000;
-const IMGBB_UPLOAD_URL = 'https://api.imgbb.com/1/upload';
-const IMGBB_API_KEY = '2e818dd0cf97e5a2f6b08f4153d51570';
+const CATBOX_API_URL = 'https://catbox.moe/user/api.php';
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
 /**
  * Extract image message from various message types including view once
@@ -50,25 +53,39 @@ function extractImageMessage(message, quoted) {
 }
 
 /**
- * Upload image to ImgBB and get public URL
+ * Upload image to Catbox.moe and get public URL
  */
-async function uploadToImgBB(buffer) {
-  const base64Image = buffer.toString('base64');
-
-  const formData = new URLSearchParams();
-  formData.append('key', IMGBB_API_KEY);
-  formData.append('image', base64Image);
-
-  const response = await axios.post(IMGBB_UPLOAD_URL, formData, {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    timeout: DEFAULT_TIMEOUT_MS
-  });
-
-  if (!response.data?.success) {
-    throw new Error('Gagal upload gambar ke hosting.');
+async function uploadToCatbox(buffer) {
+  const tempDir = path.join(__dirname, '../temp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
   }
 
-  return response.data.data.url;
+  const tempPath = path.join(tempDir, `remini_${Date.now()}.jpg`);
+  fs.writeFileSync(tempPath, buffer);
+
+  try {
+    const form = new FormData();
+    form.append('reqtype', 'fileupload');
+    form.append('fileToUpload', fs.createReadStream(tempPath));
+
+    const response = await axios.post(CATBOX_API_URL, form, {
+      headers: form.getHeaders(),
+      timeout: DEFAULT_TIMEOUT_MS
+    });
+
+    const data = response.data;
+    if (!data || typeof data !== 'string' || !data.startsWith('https://')) {
+      throw new Error('Invalid response from Catbox');
+    }
+
+    return data;
+  } finally {
+    // Cleanup temp file
+    if (fs.existsSync(tempPath)) {
+      fs.unlinkSync(tempPath);
+    }
+  }
 }
 
 /**
@@ -107,7 +124,7 @@ async function downloadImage(url) {
 class ReminiFeature {
   constructor() {
     this.name = 'remini';
-    this.description = '_Upscale gambar (Remini AI)_';
+    this.description = '_HD Image_';
     this.ownerOnly = false;
   }
 
@@ -147,12 +164,17 @@ class ReminiFeature {
         throw new AppError('Gagal mengunduh gambar.');
       }
 
-      // Step 2: Upload to ImgBB
+      // Check file size
+      if (buffer.length > MAX_SIZE) {
+        throw new AppError('Gambar terlalu besar! Maksimal 10MB.');
+      }
+
+      // Step 2: Upload to Catbox
       await sock.sendMessage(remoteJid, {
         text: Formatter.italic('☁️ Mengupload gambar...')
       });
 
-      const publicUrl = await uploadToImgBB(buffer);
+      const publicUrl = await uploadToCatbox(buffer);
 
       // Step 3: Process with Remini
       await sock.sendMessage(remoteJid, {
