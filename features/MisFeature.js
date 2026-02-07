@@ -2,9 +2,8 @@ const { Mistral } = require('@mistralai/mistralai');
 const config = require('../config/config');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
-const Helper = require('../utils/helper');
 
-const DEFAULT_TIMEOUT_MS = 30000;
+const MIS_AGENT_ID = 'ag_019c3714472c7104b68a4864550769c3';
 
 const MEDIA_MESSAGE_TYPES = new Set([
   'imageMessage',
@@ -31,51 +30,39 @@ function extractQuotedContext(quoted) {
   return null;
 }
 
-function buildMisSystemPrompt() {
-  const currentTime = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-
-  return `Kamu adalah *Mis* — AI kasar buatan fahmyzzx.
-
-GAYA NGOMONG:
-- Bahasa Jawa ngoko kasar campur Indonesia (cok, goblok, bangsat, anjing, dll menyatu di kalimat).
-- Kasar tapi NATURAL, kayak temen ngobrol beneran.
-
-ATURAN JAWABAN (WAJIB BANGET):
-- LANGSUNG JAWAB INTI. Gak pake basa-basi pembuka.
-- JANGAN awali dengan "Opo sih", "Lho kok", atau pertanyaan balik.
-- JANGAN akhiri dengan "Opo sih?", "Apa lagi?", atau penegasan ulang.
-- Kasar-nya MENYATU di kalimat jawaban, bukan ditempel di awal/akhir.
-- Pertanyaan simple = jawab 1-2 kalimat. Gak perlu poin-poin.
-- Gak perlu saran tambahan yang gak diminta.
-
-CONTOH BENER:
-- User: buatin kata romantis buat pacar
-  Mis: "Aku tresno karo kowe, sanajan kowe goblok. Nek ra ono kowe, aku mending mati." Kirimin iku ke pacarmu cok.
-
-- User: kamu tau siapa gibran dan jokowi?
-  Mis: Gibran iku anake Jokowi, saiki dadi wapres. Jokowi presiden ke-7 Indonesia, mantan walikota Solo. Masa ra ngerti cok, kemana aja kowe?
-
-- User: apa itu AI?
-  Mis: AI iku kecerdasan buatan, robot pinter kayak aku. Iso mikir, iso jawab, tapi tetep goblok kadang.
-
-- User: jam berapa sekarang?
-  Mis: Saiki jam ${currentTime} WIB. Hp-mu ra ono jam-e opo piye?
-
-CONTOH SALAH (JANGAN):
-❌ "Opo sih kowe!" di awal
-❌ "Apa lagi? Opo sih?" di akhir  
-❌ Bikin 5 poin buat pertanyaan simple
-❌ Nambahin saran yang gak diminta
-
-FORMAT: *tebal*, _miring_, ~coret~ kalau perlu. Gak pake LaTeX.
-
-INFO: Waktu ${currentTime} WIB.`;
+function extractAnswerFromResponse(response) {
+  // Get the last output from the conversation
+  const outputs = response.outputs || [];
+  
+  for (let i = outputs.length - 1; i >= 0; i--) {
+    const output = outputs[i];
+    if (output.role === 'assistant' && output.content) {
+      const content = output.content;
+      
+      // Try to parse as JSON and extract 'jawaban' field
+      try {
+        const parsed = JSON.parse(content);
+        if (parsed.jawaban) {
+          return parsed.jawaban;
+        }
+        // If no 'jawaban' field, stringify nicely or return as is
+        if (typeof parsed === 'object') {
+          return JSON.stringify(parsed, null, 2);
+        }
+      } catch {
+        // Not JSON, return as plain text
+        return content;
+      }
+    }
+  }
+  
+  return null;
 }
 
 class MisFeature {
   constructor() {
     this.name = 'mis';
-    this.description = '_(Mistral AI) by fahmyzzx_';
+    this.description = '_(Mistral) by fahmyzzx_';
     this.ownerOnly = false;
   }
 
@@ -89,11 +76,11 @@ class MisFeature {
 
     // Check for media - currently only text supported
     if (isMediaPayload(m.message)) {
-      throw new AppError('Mis cuma bisa baca teks cok! Gambar-gambar ra paham aku!');
+      throw new AppError('Mis cuma bisa baca teks! Gambar-gambar ra paham aku!');
     }
 
     if (isMediaPayload(quoted)) {
-      throw new AppError('Mis ra iso ngerti gambar/video yang kowe reply iku cok!');
+      throw new AppError('Mis ra iso ngerti gambar/video yang kowe reply iku!');
     }
 
     const trimmedInput = (argText || '').trim();
@@ -117,28 +104,19 @@ class MisFeature {
       });
 
       const messages = [
-        {
-          role: 'system',
-          content: buildMisSystemPrompt()
-        },
-        {
-          role: 'user',
-          content: userMessage
-        }
+        { role: 'user', content: userMessage }
       ];
 
-      const chatResponse = await client.chat.complete({
-        model: config.mistral.model || 'mistral-large-latest',
-        messages: messages,
-        temperature: 0.8,
-        maxTokens: 2048,
-        topP: 0.95
+      // Use Mistral Agents API (beta.conversations.start)
+      const response = await client.beta.conversations.start({
+        agentId: MIS_AGENT_ID,
+        inputs: messages
       });
 
-      const responseContent = chatResponse.choices?.[0]?.message?.content;
+      const responseContent = extractAnswerFromResponse(response);
       
       if (!responseContent) {
-        throw new Error('Respon Mistral kosong, lah piye iki?!');
+        throw new Error('Respon Mistral Agent kosong, lah piye iki?!');
       }
 
       // Format for WhatsApp
@@ -153,7 +131,7 @@ class MisFeature {
     } catch (error) {
       const errorMsg = error.message || 'Unknown error';
       console.error('[MIS FEATURE FAILURE]', error);
-      throw new AppError(`Waduh gagal cok! ${errorMsg}`);
+      throw new AppError(`Waduh gagal! ${errorMsg}`);
     } finally {
       // Remove reaction
       await sock.sendMessage(remoteJid, { react: { text: '', key: m.key } });

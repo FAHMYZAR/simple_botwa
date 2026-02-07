@@ -4,13 +4,17 @@ module.exports = {
   ownerNumber: process.env.OWNER_NUMBER || '6285226166485',
   ownerPrefix: process.env.OWNER_PREFIX || '&',
   userPrefix: process.env.USER_PREFIX || '!',
+  ferdev: {
+    apiKey: process.env.FERDEV_API_KEY,
+    baseUrl: 'https://api.ferdev.my.id'
+  },
   gemini: {
     apiKey: process.env.GEMINI_API_KEY,
     baseUrl: process.env.GEMINI_API_URL || 'https://generativelanguage.googleapis.com/v1beta/models/'
   },
   aiFeature: {
     apiKey: process.env.AI_FEATURE_API_KEY,
-    baseUrl: process.env.AI_FEATURE_API_URL || 'https://api.ferdev.my.id/ai/gptlogic'
+    baseUrl: process.env.AI_FEATURE_API_URL || 'https://api.ferdev.my.id/ai/felo'
   },
   stickerService: {
     telegram: {

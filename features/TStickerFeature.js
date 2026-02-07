@@ -82,7 +82,7 @@ class TStickerFeature {
     await sock.sendMessage(remoteJid, {
       sticker: stickerBuffer,
       mimetype: 'image/webp'
-    }, { quoted: m });
+    });
 
     await sock.sendMessage(remoteJid, {
       text: Formatter.italic('Stiker dikirim ulang. Tahan stiker untuk menambah ke favorit kamu.')
@@ -102,7 +102,7 @@ class TStickerFeature {
     await sock.sendMessage(remoteJid, {
       sticker: stickerBuffer,
       mimetype: 'image/webp'
-    }, { quoted: m });
+    });
 
     await sock.sendMessage(remoteJid, {
       text: Formatter.italic('Gambar diubah menjadi stiker. Tahan stiker untuk menyimpan.')
@@ -195,7 +195,7 @@ class TStickerFeature {
         await sock.sendMessage(remoteJid, {
           sticker: stickerBuffer,
           mimetype: 'image/webp'
-        }, { quoted: m });
+        });
         delivered += 1;
       } catch (error) {
         console.error('[TSTICKER] Failed to send Telegram sticker:', error.message);

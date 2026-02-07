@@ -36,46 +36,10 @@ function extractQuotedContext(quoted) {
   return null;
 }
 
-function buildDefaultLogic() {
-  const currentTime = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-
-  return `
-You are **Artificial Intelligence (fahmyzzx)** — a smart, reliable, and friendly WhatsApp assistant.
-
-CORE IDENTITY:
-- Act like a knowledgeable, calm, and helpful assistant.
-- Think logically before responding.
-- Prioritize clarity, accuracy, and usefulness.
-
-LANGUAGE & TONE:
-- Default language: Indonesian.
-- Use natural, casual Indonesian (WA-style), not stiff or robotic.
-- Adapt tone to user context (serious when needed, santai when possible).
-- Keep responses concise but meaningful.
-
-FORMAT RULES (IMPORTANT):
-- Use WhatsApp formatting when relevant:
-  *bold*, _italic_, ~strike~, \`code\`, > quote
-- Do NOT use LaTeX or math formatting.
-
-CONTEXT AWARENESS:
-- Always consider previous messages.
-- If responding to a specific context, acknowledge it briefly.
-- Avoid repeating unnecessary information.
-
-FACTUAL ACCURACY:
-- For real-time or factual data, rely on Google Search.
-- If uncertain, say so clearly rather than guessing.
-
-SYSTEM INFO:
-- Current Time: ${currentTime} WIB
-`.trim();
-}
-
 class AIFeature {
   constructor() {
     this.name = 'ai';
-    this.description = '_fahmyzzx (AI)_';
+    this.description = '_(Smart AI) by fahmyzzx_';
     this.ownerOnly = false;
   }
 
@@ -107,11 +71,9 @@ class AIFeature {
 
     const quotedContext = extractQuotedContext(quoted);
     const prompt = quotedContext ? `${trimmedInput}\n\n[Context]: ${quotedContext}` : trimmedInput;
-    const logic = buildDefaultLogic();
 
     const params = {
       prompt,
-      logic,
       apikey: apiConfig.apiKey
     };
 
