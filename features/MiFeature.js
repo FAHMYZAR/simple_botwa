@@ -1,13 +1,12 @@
 const config = require('../config/config');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
+const Helper = require('../utils/helper');
 
-const MEDIA_MESSAGE_TYPES = new Set([
-  'imageMessage',
+const SKIP_MESSAGE_TYPES = new Set([
   'videoMessage',
   'documentMessage',
   'audioMessage',
-  'stickerMessage',
   'documentWithCaptionMessage'
 ]);
 
@@ -127,12 +126,71 @@ const WEB_SEARCH_KEYWORDS = [
   'mana yang terbaik sekarang'
 ];
 
-function isMediaPayload(message) {
+function shouldSkipPayload(message) {
   if (!message) {
     return false;
   }
 
-  return Object.keys(message).some((key) => MEDIA_MESSAGE_TYPES.has(key));
+  return Object.keys(message).some((key) => SKIP_MESSAGE_TYPES.has(key));
+}
+
+function getImagePayload(message) {
+  if (!message) {
+    return null;
+  }
+
+  if (message.imageMessage) {
+    return {
+      content: message.imageMessage,
+      downloadType: 'image',
+      mimeType: message.imageMessage.mimetype || 'image/jpeg'
+    };
+  }
+
+  if (message.stickerMessage) {
+    return {
+      content: message.stickerMessage,
+      downloadType: 'sticker',
+      mimeType: message.stickerMessage.mimetype || 'image/webp'
+    };
+  }
+
+  return null;
+}
+
+function getTextPayload(message) {
+  if (!message) {
+    return '';
+  }
+
+  return message.conversation
+    || message.extendedTextMessage?.text
+    || message.imageMessage?.caption
+    || '';
+}
+
+function buildVisionMessages(prompt, imageBase64, mimeType) {
+  return [
+    {
+      role: 'system',
+      content: buildSystemInstruction() + '\n\nAnalisis gambar/sticker sesuai pertanyaan user. Jika user tidak memberi pertanyaan jelas, jelaskan isi media secara ringkas.'
+    },
+    {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: prompt
+        },
+        {
+          type: 'image_url',
+          image_url: {
+            url: `data:${mimeType};base64,${imageBase64}`
+          }
+        }
+      ]
+    }
+  ];
 }
 
 function extractQuotedContext(quoted) {
@@ -246,6 +304,70 @@ class RouterClient {
     }
   }
 
+  extractChatText(data) {
+    const choice = data?.choices?.[0];
+    const messageContent = choice?.message?.content;
+
+    if (typeof messageContent === 'string') {
+      return messageContent;
+    }
+
+    if (Array.isArray(messageContent)) {
+      const joinedContent = messageContent
+        .map((item) => {
+          if (typeof item === 'string') {
+            return item;
+          }
+          if (typeof item?.text === 'string') {
+            return item.text;
+          }
+          if (typeof item?.content === 'string') {
+            return item.content;
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('\n');
+
+      if (joinedContent) {
+        return joinedContent;
+      }
+    }
+
+    if (typeof choice?.text === 'string') {
+      return choice.text;
+    }
+
+    if (typeof data?.output_text === 'string') {
+      return data.output_text;
+    }
+
+    if (Array.isArray(data?.output)) {
+      const outputText = data.output
+        .flatMap((item) => Array.isArray(item?.content) ? item.content : [item?.content])
+        .map((item) => {
+          if (typeof item === 'string') {
+            return item;
+          }
+          if (typeof item?.text === 'string') {
+            return item.text;
+          }
+          if (typeof item?.content === 'string') {
+            return item.content;
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('\n');
+
+      if (outputText) {
+        return outputText;
+      }
+    }
+
+    return '';
+  }
+
   async search(query, maxResults = 5) {
     this.requireApiKey();
 
@@ -288,7 +410,7 @@ class RouterClient {
     }
 
     const data = await response.json();
-    return data?.choices?.[0]?.message?.content || '';
+    return this.extractChatText(data);
   }
 }
 
@@ -366,47 +488,58 @@ class MiFeature {
   async execute(m, sock, parsed) {
     const { argText, remoteJid, quoted } = parsed;
 
-    if (isMediaPayload(m.message)) {
-      throw new AppError('Mi sementara hanya mendukung input teks.');
+    if (shouldSkipPayload(m.message) || shouldSkipPayload(quoted)) {
+      await sock.sendMessage(remoteJid, { text: 'Skip!' }, { quoted: m });
+      return;
     }
 
-    if (isMediaPayload(quoted)) {
-      throw new AppError('Mi sementara hanya mendukung konteks balasan teks.');
-    }
+    const currentImage = getImagePayload(m.message);
+    const quotedImage = getImagePayload(quoted);
+    const imagePayload = currentImage || quotedImage;
+    const currentText = getTextPayload(m.message);
+    const trimmedInput = (argText || currentText || '').replace(/^([!&])mi\b/i, '').trim();
 
-    const trimmedInput = (argText || '').trim();
-    if (!trimmedInput) {
+    if (!trimmedInput && !imagePayload) {
       throw new AppError(`Masukan pertanyaan. Contoh: ${Formatter.code('!mi berita AI hari ini')}`);
     }
 
-    const quotedContext = extractQuotedContext(quoted);
+    const quotedContext = imagePayload ? null : extractQuotedContext(quoted);
     const userPrompt = quotedContext ? `${trimmedInput}\n\n[Konteks]: ${quotedContext}` : trimmedInput;
-    const finalPrompt = buildFinalPrompt(userPrompt);
+    const finalPrompt = buildFinalPrompt(userPrompt || 'Jelaskan isi media ini secara ringkas.');
     const client = new RouterClient();
 
     const startMs = Date.now();
     let statusMessage;
 
     try {
-      statusMessage = await this.sendStatus(sock, remoteJid, m, startMs, 'Sek tak pikire...🔥');
-      const shouldSearch = await this.needsWebSearch(finalPrompt, client);
+      statusMessage = await this.sendStatus(sock, remoteJid, m, startMs, 'Sek tak pikire...');
 
       let finalAnswer;
       let refinedQuery = null;
-      if (!shouldSearch) {
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Gaperlu golek jawaban nek internet, gampang iki..');
-        finalAnswer = await client.chat(buildDirectAnswerMessages(finalPrompt));
+      if (imagePayload) {
+        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Media terdeteksi, tak baca sek...');
+        const mediaBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
+        const mediaBase64 = mediaBuffer.toString('base64');
+        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Merangkai jawaban dari media');
+        finalAnswer = await client.chat(buildVisionMessages(finalPrompt, mediaBase64, imagePayload.mimeType));
       } else {
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Pertanyaan mu butuh data terbaru, tak goleki nek web sek ya..');
-        const searchDataAwal = await client.search(finalPrompt, 5);
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Hasil awal sudah didapat.');
-        refinedQuery = String(await client.chat(buildRefineMessages(finalPrompt, searchDataAwal), config.router?.queryModel)).trim().replace(/^"|"$/g, '');
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, `Keputusan final: ${refinedQuery || finalPrompt}`);
-        const searchDataFinal = await client.search(refinedQuery || finalPrompt, 8);
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Sedelak maning..');
-        finalAnswer = await client.chat(buildAnswerMessages(finalPrompt, searchDataFinal));
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, `🔍Pencarian = ${refinedQuery || finalPrompt}`);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const shouldSearch = await this.needsWebSearch(finalPrompt, client);
+
+        if (!shouldSearch) {
+          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Gaperlu golek jawaban nek internet, gampang iki..');
+          finalAnswer = await client.chat(buildDirectAnswerMessages(finalPrompt));
+        } else {
+          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Pertanyaan mu butuh data terbaru, tak goleki nek web sek ya..');
+          const searchDataAwal = await client.search(finalPrompt, 5);
+          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Hasil awal sudah didapat.');
+          refinedQuery = String(await client.chat(buildRefineMessages(finalPrompt, searchDataAwal), config.router?.queryModel)).trim().replace(/^"|"$/g, '');
+          await this.editStatus(sock, remoteJid, statusMessage, startMs, `Keputusan final: ${refinedQuery || finalPrompt}`);
+          const searchDataFinal = await client.search(refinedQuery || finalPrompt, 8);
+          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Sedelak maning..');
+          finalAnswer = await client.chat(buildAnswerMessages(finalPrompt, searchDataFinal));
+          await this.editStatus(sock, remoteJid, statusMessage, startMs, `Pencarian = ${refinedQuery || finalPrompt}`);
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        }
       }
 
       let output = String(finalAnswer || '')
@@ -417,7 +550,12 @@ class MiFeature {
         .trim();
 
       if (!output) {
+        if (imagePayload) {
+          throw new Error('Maaf, media gagal dibaca. Coba ulang lagi.');
+        }
+
         await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Respon kosong, mencoba ulang pakai model cepat');
+
         const retryAnswer = await client.chat([
           {
             role: 'system',

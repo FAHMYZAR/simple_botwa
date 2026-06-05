@@ -1,5 +1,11 @@
 require('dotenv').config();
 
+const isProduction = (process.env.NODE_ENV || '').toLowerCase() === 'production';
+const defaultRouterBaseUrl = isProduction ? 'http://localhost:20128' : 'https://9router.icbear.space';
+const routerBaseUrl = isProduction
+  ? (process.env.ROUTER_PRODUCTION_BASE_URL || defaultRouterBaseUrl)
+  : (process.env.ROUTER_BASE_URL || defaultRouterBaseUrl);
+
 module.exports = {
   ownerNumber: process.env.OWNER_NUMBER || '6285226166485',
   ownerPrefix: process.env.OWNER_PREFIX || '&',
@@ -20,7 +26,7 @@ module.exports = {
   },
   router: {
     apiKey: process.env.ROUTER_API_KEY,
-    baseUrl: process.env.ROUTER_BASE_URL || 'https://9router.icbear.space',
+    baseUrl: routerBaseUrl,
     chatModel: process.env.ROUTER_CHAT_MODEL || 'vpscombo',
     queryModel: process.env.ROUTER_QUERY_MODEL || 'fastcombo'
   }
