@@ -43,6 +43,7 @@ class HelpFeature {
     
     const body = [
       header,
+      `GitHub: ${this.githubUrl}`,
       Formatter.section('System Status'),
       ...statusLines,
       
@@ -59,19 +60,7 @@ class HelpFeature {
 
     // Menggunakan parsed.remoteJid dari MessageParser
     await sock.sendMessage(parsed.remoteJid, {
-
-      text: body,
-      contextInfo: {
-        externalAdReply: {
-          title: 'GitHub: fahmyzar',
-          body: 'Pakai Sewajarnya saja yaa...',
-          thumbnailUrl: this.bannerUrl,
-          sourceUrl: this.githubUrl,
-          mediaType: 1,
-          renderLargerThumbnail: true,
-          showAdAttribution: false
-        }
-      }
+      text: body
     });
   }
 }

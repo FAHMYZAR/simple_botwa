@@ -3,7 +3,7 @@ const path = require('path');
 
 class StoreService {
   constructor(filePath) {
-    this.filePath = filePath || path.join(process.cwd(), 'baileys_store.json');
+    this.filePath = filePath || path.join(__dirname, '../baileys_store.json');
     this.data = {
       contacts: {},
       chats: {},

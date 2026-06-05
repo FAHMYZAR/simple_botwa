@@ -1,9 +1,15 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
 const util = require('util');
 const fs = require('fs');
+const path = require('path');
+
+const ROOT_DIR = __dirname;
+const LOG_FILE_PATH = path.join(ROOT_DIR, 'bot_logs.txt');
+const SETTINGS_PATH = path.join(ROOT_DIR, 'settings.json');
+const AUTH_DIR = path.join(ROOT_DIR, 'auth_info_baileys');
 
 // Simple Logger Implementation
-const logFile = fs.createWriteStream('bot_logs.txt', { flags: 'a' });
+const logFile = fs.createWriteStream(LOG_FILE_PATH, { flags: 'a' });
 const originalLog = console.log;
 const originalError = console.error;
 
@@ -48,7 +54,7 @@ const features = Helper.loadFeatures();
 console.log(`📦 Loaded ${features.size} features`);
 
 async function connectToWhatsApp() {
-  const { state, saveCreds } = await useMultiFileAuthState('./auth_info_baileys');
+  const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
   const { version } = await fetchLatestBaileysVersion();
 
   const sock = makeWASocket({
@@ -186,7 +192,7 @@ async function connectToWhatsApp() {
       // 7. Feature Handling
       // Feature Mode Check
       // Re-read settings every time? Okay but maybe cache later.
-      const settings = JSON.parse(fs.readFileSync('./settings.json', 'utf-8'));
+      const settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
 
       // Permission Check
       if (feature.ownerOnly && !isOwner) {

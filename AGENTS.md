@@ -16,6 +16,7 @@
 - Router base URL switches by env: production always uses `http://localhost:20128` unless `ROUTER_PRODUCTION_BASE_URL` is set; non-production uses `ROUTER_BASE_URL` or falls back to `https://9router.icbear.space`.
 - Local runtime files are intentionally gitignored: `auth_info_baileys/`, `baileys_store.json`, `bot_logs.txt`, `storage/`, `temp/`, `.env`, and logs.
 - `settings.json` controls bot mode (`private` by default) and is read on every command; `features/SetModeFeature.js` writes it.
+- Runtime paths now resolve from repo-relative `__dirname`; keep new code on that pattern and avoid `process.cwd()` / `./relative-path` for persistent files.
 - `data/afk.json` is persistent AFK state managed by `AfkService`; avoid treating it as a fixture.
 
 ## Behavior gotchas

@@ -2,9 +2,6 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
-const { exec } = require('child_process');
-const util = require('util');
-const execPromise = util.promisify(exec);
 const axios = require('axios');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
@@ -40,8 +37,9 @@ class StatsFeature {
             // 4. Contacts Loaded
             let contactCount = 0;
             try {
-                if (fs.existsSync('./baileys_store.json')) {
-                    const data = JSON.parse(fs.readFileSync('./baileys_store.json', 'utf-8'));
+                const storePath = path.join(__dirname, '../baileys_store.json');
+                if (fs.existsSync(storePath)) {
+                    const data = JSON.parse(fs.readFileSync(storePath, 'utf-8'));
                     contactCount = Object.keys(data.contacts || {}).length;
                 }
             } catch (e) { }
@@ -67,18 +65,14 @@ class StatsFeature {
             // 7. Disk Usage
             let diskUsage = 'Unknown';
             try {
-                // Get output of 'df -h /' and parse it
-                const { stdout } = await execPromise('df -h /');
-                const lines = stdout.trim().split('\n');
-                if (lines.length > 1) {
-                    // Filesystem      Size  Used Avail Use% Mounted on
-                    // /dev/root        25G  1.2G   24G   5% /
-                    const parts = lines[1].replace(/\s+/g, ' ').split(' ');
-                    const size = parts[1];
-                    const used = parts[2];
-                    const usage = parts[4];
-                    diskUsage = `${used} / ${size} (${usage})`;
-                }
+                const repoPath = path.join(__dirname, '..');
+                const stat = fs.statfsSync(repoPath);
+                const totalBytes = stat.blocks * stat.bsize;
+                const freeBytes = stat.bavail * stat.bsize;
+                const usedBytes = Math.max(totalBytes - freeBytes, 0);
+                const usagePercent = totalBytes > 0 ? ((usedBytes / totalBytes) * 100).toFixed(0) : '0';
+                const toGb = (value) => `${(value / 1024 / 1024 / 1024).toFixed(2)} GB`;
+                diskUsage = `${toGb(usedBytes)} / ${toGb(totalBytes)} (${usagePercent}%)`;
             } catch (e) {
                 diskUsage = 'N/A';
             }
@@ -94,9 +88,13 @@ class StatsFeature {
                 ispName = 'N/A';
             }
 
+            const runtimeName = typeof Bun !== 'undefined' ? 'Bun' : 'Node.js';
+            const runtimeVersion = typeof Bun !== 'undefined' ? Bun.version : process.version;
+
             const body = [
                 Formatter.bold('Artificial Intelligence (fahmyzzx)'),
                 'System Status & Statistics',
+                `GitHub: ${this.githubUrl}`,
                 Formatter.section('Environment'),
                 `› ${Formatter.bold('Platform:')} ${platform} (${arch})`,
                 `› ${Formatter.bold('OS:')} ${release}`,
@@ -106,7 +104,7 @@ class StatsFeature {
                 `› ${Formatter.bold('ISP:')} ${ispName}`,
 
                 Formatter.section('Bot Status'),
-                `› ${Formatter.bold('Node JS:')} ${process.version}`,
+                `› ${Formatter.bold('Runtime:')} ${runtimeName} ${runtimeVersion}`,
                 `› ${Formatter.bold('Uptime:')} ${uptime}`,
                 `› ${Formatter.bold('Memory Used:')} ${processMem}`,
                 `› ${Formatter.bold('Total Memory:')} ${totalMem} / ${freeMem}`,
@@ -114,24 +112,13 @@ class StatsFeature {
                 `› ${Formatter.bold('Features:')} ${featuresCount} Modules`,
                 
                 Formatter.section('Tech Stack'),
-                ...technologies.map(t => `› ${t}`),
+                ...technologies.map(t => `› ${t}`)
             ].join('\n');
 
             await sock.sendMessage(parsed.remoteJid, { react: { text: '', key: m.key } });
 
             await sock.sendMessage(parsed.remoteJid, {
-                text: body,
-                contextInfo: {
-                    externalAdReply: {
-                        title: 'System Statistics',
-                        body: 'Real-time Bot Monitoring',
-                        thumbnailUrl: this.bannerUrl,
-                        sourceUrl: this.githubUrl,
-                        mediaType: 1,
-                        renderLargerThumbnail: true,
-                        showAdAttribution: false
-                    }
-                }
+                text: body
             });
     }
 

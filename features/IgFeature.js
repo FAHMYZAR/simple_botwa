@@ -72,10 +72,6 @@ class IgFeature {
     await sock.sendMessage(remoteJid, { react: { text: '📸', key: m.key } });
 
     try {
-      await sock.sendMessage(remoteJid, {
-        text: Formatter.italic('🔍 Mengambil media dari Instagram...')
-      });
-
       const response = await axios.get(`${ferdevConfig.baseUrl}/downloader/instagram`, {
         params: {
           link: link,
@@ -103,10 +99,6 @@ class IgFeature {
         await this.sendMedia(sock, remoteJid, result.dlink);
       } else if (result.type === 'carousel' && Array.isArray(result.media)) {
         // Multiple media (carousel)
-        await sock.sendMessage(remoteJid, {
-          text: Formatter.italic(`📦 Mengunduh ${result.media.length} media...`)
-        });
-
         for (const mediaItem of result.media) {
           const mediaUrl = mediaItem.url || mediaItem.dlink || mediaItem;
           if (typeof mediaUrl === 'string') {
@@ -122,10 +114,6 @@ class IgFeature {
       } else {
         throw new AppError('Format response tidak dikenal.');
       }
-
-      await sock.sendMessage(remoteJid, {
-        text: `${Formatter.bold('✅ Download selesai!')}\n\n${Formatter.italic('Powered by Ferdev API')}`
-      });
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
