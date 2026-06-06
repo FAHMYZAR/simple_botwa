@@ -953,12 +953,12 @@ class MiFeature {
         throw new Error('Mode edit butuh gambar atau sticker sebagai input.');
       }
 
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengedit media via Agnes AI...');
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengedit media...');
       const inputBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
       const imageDataUri = `data:${imagePayload.mimeType};base64,${inputBuffer.toString('base64')}`;
       result = await agnesClient.edit(prompt, imageDataUri, size);
     } else {
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Generate gambar via Agnes AI...');
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Generating gambar...');
       result = await agnesClient.generate(prompt, size);
     }
 
