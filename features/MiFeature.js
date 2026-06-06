@@ -1,3 +1,4 @@
+const sharp = require('sharp');
 const config = require('../config/config');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
@@ -169,30 +170,6 @@ function getTextPayload(message) {
     || '';
 }
 
-function buildVisionMessages(prompt, imageBase64, mimeType) {
-  return [
-    {
-      role: 'system',
-      content: buildSystemInstruction() + '\n\nAnalisis gambar/sticker sesuai pertanyaan user. Jika user tidak memberi pertanyaan jelas, jelaskan isi media secara ringkas.'
-    },
-    {
-      role: 'user',
-      content: [
-        {
-          type: 'text',
-          text: prompt
-        },
-        {
-          type: 'image_url',
-          image_url: {
-            url: `data:${mimeType};base64,${imageBase64}`
-          }
-        }
-      ]
-    }
-  ];
-}
-
 function extractQuotedContext(quoted) {
   if (!quoted) {
     return null;
@@ -257,6 +234,30 @@ function buildDirectAnswerMessages(prompt) {
   ];
 }
 
+function buildVisionMessages(prompt, imageBase64, mimeType) {
+  return [
+    {
+      role: 'system',
+      content: buildSystemInstruction() + '\n\nAnalisis gambar/sticker sesuai pertanyaan user. Jika user tidak memberi pertanyaan jelas, jelaskan isi media secara ringkas.'
+    },
+    {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: prompt
+        },
+        {
+          type: 'image_url',
+          image_url: {
+            url: `data:${mimeType};base64,${imageBase64}`
+          }
+        }
+      ]
+    }
+  ];
+}
+
 function buildRefineMessages(finalPrompt, searchData) {
   return [
     {
@@ -279,6 +280,34 @@ function buildAnswerMessages(finalPrompt, searchData) {
     {
       role: 'user',
       content: `SEARCH_RESULT_FINAL:\n${JSON.stringify(searchData, null, 2)}\n\nPERTANYAAN_USER:\n${finalPrompt}`
+    }
+  ];
+}
+
+function buildIntentMessages(prompt, hasMediaInput) {
+  return [
+    {
+      role: 'system',
+      content: [
+        'Kamu bertugas mengklasifikasikan intent user untuk fitur WhatsApp AI.',
+        'Balas hanya JSON valid tanpa markdown.',
+        'Field wajib: mode, refined_prompt, size.',
+        'mode hanya boleh salah satu: chat, analyze, generate_image, generate_sticker, edit_image, edit_sticker.',
+        'Kalau ada typo seperti gmbr, gbar, stker, stciker, bikinin, ubahin, pahami maksud user.',
+        `Kalau has_media_input=${hasMediaInput ? 'true' : 'false'}.`,
+        'Jika user minta bikin gambar baru, pilih generate_image.',
+        'Jika user minta bikin sticker/stiker baru, pilih generate_sticker.',
+        'Jika ada media input dan user minta mengubah isi/media, pilih edit_image atau edit_sticker.',
+        'Jika ada media input dan user hanya bertanya/menjelaskan isi media, pilih analyze.',
+        'Jika user hanya bertanya biasa tanpa media generation/edit, pilih chat.',
+        'Gunakan size aman. Default 1024x1024 jika tidak jelas.',
+        'refined_prompt harus rapi, jelas, dan siap dikirim ke model gambar jika mode generate/edit.',
+        'Contoh output: {"mode":"generate_sticker","refined_prompt":"cute angry banana sticker, expressive, clean background, high quality","size":"1024x1024"}'
+      ].join(' ')
+    },
+    {
+      role: 'user',
+      content: prompt
     }
   ];
 }
@@ -414,40 +443,207 @@ class RouterClient {
   }
 }
 
+class AgnesImageClient {
+  constructor() {
+    this.baseUrl = String(config.agnes?.baseUrl || '').replace(/\/$/, '');
+    this.apiKey = config.agnes?.apiKey;
+    this.imageModel = config.agnes?.imageModel;
+    this.imageSize = config.agnes?.imageSize;
+  }
+
+  get headers() {
+    return {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.apiKey}`
+    };
+  }
+
+  requireApiKey() {
+    if (!this.apiKey) {
+      throw new AppError('Agnes API key belum diset di environment (AGNES_API_KEY).');
+    }
+  }
+
+  buildGenerationPayload(prompt, size = this.imageSize) {
+    return {
+      model: this.imageModel,
+      prompt,
+      size,
+      return_base64: true,
+      extra_body: {
+        response_format: 'b64_json'
+      }
+    };
+  }
+
+  buildEditPayload(prompt, imageDataUri, size = this.imageSize) {
+    return {
+      model: this.imageModel,
+      prompt,
+      size,
+      image: [imageDataUri],
+      return_base64: true,
+      extra_body: {
+        response_format: 'b64_json'
+      }
+    };
+  }
+
+  async requestImage(payload) {
+    this.requireApiKey();
+
+    const response = await fetch(`${this.baseUrl}/v1/images/generations`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Agnes image generation gagal.');
+    }
+
+    return response.json();
+  }
+
+  extractGeneratedImage(response) {
+    const candidates = [];
+
+    const collectKnownImageFields = (value) => {
+      if (typeof value?.b64_json === 'string') {
+        candidates.push({ type: 'base64', mime: 'image/png', value: value.b64_json });
+      }
+
+      if (typeof value?.url === 'string') {
+        candidates.push(this.candidateFromUrl(value.url));
+      }
+
+      if (typeof value?.image_url?.url === 'string') {
+        candidates.push(this.candidateFromUrl(value.image_url.url));
+      }
+
+      if (typeof value?.inlineData?.data === 'string') {
+        candidates.push({
+          type: 'base64',
+          mime: value.inlineData.mimeType || 'image/png',
+          value: value.inlineData.data
+        });
+      }
+
+      if (typeof value?.inline_data?.data === 'string') {
+        candidates.push({
+          type: 'base64',
+          mime: value.inline_data.mime_type || 'image/png',
+          value: value.inline_data.data
+        });
+      }
+    };
+
+    const walk = (value) => {
+      if (value == null) {
+        return;
+      }
+
+      if (typeof value === 'string') {
+        if (value.startsWith('data:image/')) {
+          candidates.push({ type: 'data_url', value });
+        } else if (this.isImageUrl(value)) {
+          candidates.push({ type: 'url', value });
+        }
+        return;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach(walk);
+        return;
+      }
+
+      if (typeof value === 'object') {
+        collectKnownImageFields(value);
+        Object.values(value).forEach(walk);
+      }
+    };
+
+    walk(response);
+    return candidates[0] || null;
+  }
+
+  candidateFromUrl(url) {
+    if (url.startsWith('data:image/')) {
+      return { type: 'data_url', value: url };
+    }
+
+    return { type: 'url', value: url };
+  }
+
+  isImageUrl(value) {
+    try {
+      const parsed = new URL(value);
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        return false;
+      }
+      return /\.(png|jpe?g|webp|gif|svg)$/i.test(parsed.pathname);
+    } catch {
+      return false;
+    }
+  }
+
+  async imageCandidateToBuffer(candidate) {
+    if (!candidate) {
+      throw new Error('Response image API tidak berisi gambar.');
+    }
+
+    if (candidate.type === 'data_url') {
+      const match = candidate.value.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/s);
+      if (!match) {
+        throw new Error('Format data URL gambar tidak valid.');
+      }
+      return {
+        buffer: Buffer.from(match[2], 'base64'),
+        mime: match[1]
+      };
+    }
+
+    if (candidate.type === 'base64') {
+      return {
+        buffer: Buffer.from(candidate.value, 'base64'),
+        mime: candidate.mime || 'image/png'
+      };
+    }
+
+    if (candidate.type === 'url') {
+      const response = await fetch(candidate.value);
+      if (!response.ok) {
+        throw new Error('Gagal mengambil gambar hasil Agnes dari URL.');
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      return {
+        buffer: Buffer.from(arrayBuffer),
+        mime: response.headers.get('content-type') || 'image/png'
+      };
+    }
+
+    throw new Error(`Tipe gambar tidak dikenal: ${candidate.type}`);
+  }
+
+  async generate(prompt, size = this.imageSize) {
+    const response = await this.requestImage(this.buildGenerationPayload(prompt, size));
+    const candidate = this.extractGeneratedImage(response);
+    return this.imageCandidateToBuffer(candidate);
+  }
+
+  async edit(prompt, imageDataUri, size = this.imageSize) {
+    const response = await this.requestImage(this.buildEditPayload(prompt, imageDataUri, size));
+    const candidate = this.extractGeneratedImage(response);
+    return this.imageCandidateToBuffer(candidate);
+  }
+}
+
 class MiFeature {
   constructor() {
     this.name = 'mi';
     this.description = '_(Mi AI Search) by fahmyzzx_';
     this.ownerOnly = false;
-  }
-
-  async needsWebSearch(prompt, client) {
-    const normalizedPrompt = String(prompt || '').toLowerCase();
-
-    if (EXPLICIT_WEB_SEARCH_KEYWORDS.some((keyword) => normalizedPrompt.includes(keyword))) {
-      return true;
-    }
-
-    const decision = await client.chat([
-      {
-        role: 'system',
-        content: 'Tentukan apakah prompt user butuh web search sebelum dijawab. Balas hanya dengan salah satu label ini tanpa penjelasan: WEB_SEARCH atau DIRECT_ANSWER. Pilih WEB_SEARCH jika pertanyaan butuh data terbaru, kondisi saat ini, verifikasi fakta yang bisa berubah, atau user secara eksplisit meminta mencari di web/search/google. Pilih DIRECT_ANSWER jika pertanyaan bisa dijawab dari pengetahuan umum tanpa data terbaru.'
-      },
-      {
-        role: 'user',
-        content: prompt
-      }
-    ], config.router?.queryModel);
-
-    const normalizedDecision = String(decision || '').trim().toUpperCase();
-    if (normalizedDecision === 'WEB_SEARCH') {
-      return true;
-    }
-    if (normalizedDecision === 'DIRECT_ANSWER') {
-      return false;
-    }
-
-    return WEB_SEARCH_KEYWORDS.some((keyword) => normalizedPrompt.includes(keyword));
   }
 
   formatElapsed(startMs) {
@@ -485,6 +681,176 @@ class MiFeature {
     });
   }
 
+  normalizeMode(value) {
+    const allowed = new Set(['chat', 'analyze', 'generate_image', 'generate_sticker', 'edit_image', 'edit_sticker']);
+    return allowed.has(value) ? value : 'chat';
+  }
+
+  safeParseIntent(raw, fallbackPrompt, hasMediaInput) {
+    const match = String(raw || '').match(/\{[\s\S]*\}/);
+    if (!match) {
+      return {
+        mode: hasMediaInput ? 'analyze' : 'chat',
+        refined_prompt: fallbackPrompt,
+        size: config.agnes?.imageSize || '1024x1024'
+      };
+    }
+
+    try {
+      const parsed = JSON.parse(match[0]);
+      return {
+        mode: this.normalizeMode(parsed.mode),
+        refined_prompt: String(parsed.refined_prompt || fallbackPrompt).trim() || fallbackPrompt,
+        size: String(parsed.size || config.agnes?.imageSize || '1024x1024').trim() || (config.agnes?.imageSize || '1024x1024')
+      };
+    } catch {
+      return {
+        mode: hasMediaInput ? 'analyze' : 'chat',
+        refined_prompt: fallbackPrompt,
+        size: config.agnes?.imageSize || '1024x1024'
+      };
+    }
+  }
+
+  async detectIntent(prompt, hasMediaInput, client) {
+    const raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
+    return this.safeParseIntent(raw, prompt, hasMediaInput);
+  }
+
+  async needsWebSearch(prompt, client) {
+    const normalizedPrompt = String(prompt || '').toLowerCase();
+
+    if (EXPLICIT_WEB_SEARCH_KEYWORDS.some((keyword) => normalizedPrompt.includes(keyword))) {
+      return true;
+    }
+
+    const decision = await client.chat([
+      {
+        role: 'system',
+        content: 'Tentukan apakah prompt user butuh web search sebelum dijawab. Balas hanya dengan salah satu label ini tanpa penjelasan: WEB_SEARCH atau DIRECT_ANSWER. Pilih WEB_SEARCH jika pertanyaan butuh data terbaru, kondisi saat ini, verifikasi fakta yang bisa berubah, atau user secara eksplisit meminta mencari di web/search/google. Pilih DIRECT_ANSWER jika pertanyaan bisa dijawab dari pengetahuan umum tanpa data terbaru.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ], config.router?.queryModel);
+
+    const normalizedDecision = String(decision || '').trim().toUpperCase();
+    if (normalizedDecision === 'WEB_SEARCH') {
+      return true;
+    }
+    if (normalizedDecision === 'DIRECT_ANSWER') {
+      return false;
+    }
+
+    return WEB_SEARCH_KEYWORDS.some((keyword) => normalizedPrompt.includes(keyword));
+  }
+
+  async analyzeMedia(client, prompt, imagePayload) {
+    const mediaBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
+    const mediaBase64 = mediaBuffer.toString('base64');
+    return client.chat(buildVisionMessages(prompt, mediaBase64, imagePayload.mimeType));
+  }
+
+  async generateOrEditMedia(sock, remoteJid, m, statusMessage, startMs, prompt, imagePayload, mode, size) {
+    const agnesClient = new AgnesImageClient();
+    const isStickerOutput = mode === 'generate_sticker' || mode === 'edit_sticker';
+    const isEditMode = mode === 'edit_image' || mode === 'edit_sticker';
+
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Menyiapkan prompt gambar...');
+
+    let result;
+    if (isEditMode) {
+      if (!imagePayload) {
+        throw new Error('Mode edit butuh gambar atau sticker sebagai input.');
+      }
+
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengedit media via Agnes AI...');
+      const inputBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
+      const imageDataUri = `data:${imagePayload.mimeType};base64,${inputBuffer.toString('base64')}`;
+      result = await agnesClient.edit(prompt, imageDataUri, size);
+    } else {
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Generate gambar via Agnes AI...');
+      result = await agnesClient.generate(prompt, size);
+    }
+
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengirim hasil...');
+
+    if (isStickerOutput) {
+      const stickerBuffer = await sharp(result.buffer)
+        .resize(512, 512, {
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 }
+        })
+        .webp({ lossless: true })
+        .toBuffer();
+
+      await sock.sendMessage(remoteJid, { sticker: stickerBuffer }, { quoted: m });
+    } else {
+      await sock.sendMessage(remoteJid, {
+        image: result.buffer,
+        mimetype: result.mime || 'image/png'
+      }, { quoted: m });
+    }
+
+    await this.finishStatus(sock, remoteJid, statusMessage, 'Selesai.', m);
+  }
+
+  async handleChatMode(sock, remoteJid, m, statusMessage, startMs, finalPrompt, client) {
+    const shouldSearch = await this.needsWebSearch(finalPrompt, client);
+
+    let finalAnswer;
+    if (!shouldSearch) {
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Gaperlu golek jawaban nek internet, gampang iki..');
+      finalAnswer = await client.chat(buildDirectAnswerMessages(finalPrompt));
+    } else {
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Pertanyaan mu butuh data terbaru, tak goleki nek web sek ya..');
+      const searchDataAwal = await client.search(finalPrompt, 5);
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Hasil awal sudah didapat.');
+      const refinedQuery = String(await client.chat(buildRefineMessages(finalPrompt, searchDataAwal), config.router?.queryModel)).trim().replace(/^"|"$/g, '');
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, `Keputusan final: ${refinedQuery || finalPrompt}`);
+      const searchDataFinal = await client.search(refinedQuery || finalPrompt, 8);
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Sedelak maning..');
+      finalAnswer = await client.chat(buildAnswerMessages(finalPrompt, searchDataFinal));
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, `Pencarian = ${refinedQuery || finalPrompt}`);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+
+    let output = String(finalAnswer || '')
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')
+      .replace(/###\s?(.*)/g, '*$1*')
+      .replace(/##\s?(.*)/g, '*$1*')
+      .replace(/#\s?(.*)/g, '*$1*')
+      .trim();
+
+    if (!output) {
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Respon kosong, mencoba ulang pakai model cepat');
+      const retryAnswer = await client.chat([
+        {
+          role: 'system',
+          content: buildSystemInstruction() + '\n\nJawab ulang pertanyaan user secara langsung. Output hanya jawaban final, jangan kosong.'
+        },
+        {
+          role: 'user',
+          content: finalPrompt
+        }
+      ], config.router?.queryModel);
+
+      output = String(retryAnswer || '')
+        .replace(/\*\*(.*?)\*\*/g, '*$1*')
+        .replace(/###\s?(.*)/g, '*$1*')
+        .replace(/##\s?(.*)/g, '*$1*')
+        .replace(/#\s?(.*)/g, '*$1*')
+        .trim();
+    }
+
+    if (!output) {
+      throw new Error('Respon Mi kosong setelah retry model cepat.');
+    }
+
+    await this.finishStatus(sock, remoteJid, statusMessage, output, m);
+  }
+
   async execute(m, sock, parsed) {
     const { argText, remoteJid, quoted } = parsed;
 
@@ -512,74 +878,47 @@ class MiFeature {
     let statusMessage;
 
     try {
-      statusMessage = await this.sendStatus(sock, remoteJid, m, startMs, 'Sek tak pikire...');
+      statusMessage = await this.sendStatus(sock, remoteJid, m, startMs, 'Memahami permintaan...');
+      const intent = await this.detectIntent(userPrompt || finalPrompt, Boolean(imagePayload), client);
 
-      let finalAnswer;
-      let refinedQuery = null;
-      if (imagePayload) {
+      if (intent.mode === 'analyze') {
+        if (!imagePayload) {
+          throw new Error('Mode analisis media butuh gambar atau sticker sebagai input.');
+        }
+
         await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Media terdeteksi, tak baca sek...');
-        const mediaBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
-        const mediaBase64 = mediaBuffer.toString('base64');
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Merangkai jawaban dari media');
-        finalAnswer = await client.chat(buildVisionMessages(finalPrompt, mediaBase64, imagePayload.mimeType));
-      } else {
-        const shouldSearch = await this.needsWebSearch(finalPrompt, client);
-
-        if (!shouldSearch) {
-          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Gaperlu golek jawaban nek internet, gampang iki..');
-          finalAnswer = await client.chat(buildDirectAnswerMessages(finalPrompt));
-        } else {
-          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Pertanyaan mu butuh data terbaru, tak goleki nek web sek ya..');
-          const searchDataAwal = await client.search(finalPrompt, 5);
-          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Hasil awal sudah didapat.');
-          refinedQuery = String(await client.chat(buildRefineMessages(finalPrompt, searchDataAwal), config.router?.queryModel)).trim().replace(/^"|"$/g, '');
-          await this.editStatus(sock, remoteJid, statusMessage, startMs, `Keputusan final: ${refinedQuery || finalPrompt}`);
-          const searchDataFinal = await client.search(refinedQuery || finalPrompt, 8);
-          await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Sedelak maning..');
-          finalAnswer = await client.chat(buildAnswerMessages(finalPrompt, searchDataFinal));
-          await this.editStatus(sock, remoteJid, statusMessage, startMs, `Pencarian = ${refinedQuery || finalPrompt}`);
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-        }
-      }
-
-      let output = String(finalAnswer || '')
-        .replace(/\*\*(.*?)\*\*/g, '*$1*')
-        .replace(/###\s?(.*)/g, '*$1*')
-        .replace(/##\s?(.*)/g, '*$1*')
-        .replace(/#\s?(.*)/g, '*$1*')
-        .trim();
-
-      if (!output) {
-        if (imagePayload) {
-          throw new Error('Maaf, media gagal dibaca. Coba ulang lagi.');
-        }
-
-        await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Respon kosong, mencoba ulang pakai model cepat');
-
-        const retryAnswer = await client.chat([
-          {
-            role: 'system',
-            content: buildSystemInstruction() + '\n\nJawab ulang pertanyaan user secara langsung. Output hanya jawaban final, jangan kosong.'
-          },
-          {
-            role: 'user',
-            content: finalPrompt
-          }
-        ], config.router?.queryModel);
-
-        output = String(retryAnswer || '')
+        const finalAnswer = await this.analyzeMedia(client, intent.refined_prompt || finalPrompt, imagePayload);
+        const output = String(finalAnswer || '')
           .replace(/\*\*(.*?)\*\*/g, '*$1*')
           .replace(/###\s?(.*)/g, '*$1*')
           .replace(/##\s?(.*)/g, '*$1*')
           .replace(/#\s?(.*)/g, '*$1*')
           .trim();
+
+        if (!output) {
+          throw new Error('Maaf, media gagal dibaca. Coba ulang lagi.');
+        }
+
+        await this.finishStatus(sock, remoteJid, statusMessage, output, m);
+        return;
       }
 
-      if (!output) {
-        throw new Error('Respon Mi kosong setelah retry model cepat.');
+      if (['generate_image', 'generate_sticker', 'edit_image', 'edit_sticker'].includes(intent.mode)) {
+        await this.generateOrEditMedia(
+          sock,
+          remoteJid,
+          m,
+          statusMessage,
+          startMs,
+          intent.refined_prompt || finalPrompt,
+          imagePayload,
+          intent.mode,
+          intent.size || config.agnes?.imageSize
+        );
+        return;
       }
 
-      await this.finishStatus(sock, remoteJid, statusMessage, output, m);
+      await this.handleChatMode(sock, remoteJid, m, statusMessage, startMs, finalPrompt, client);
     } catch (error) {
       console.error('[MI FEATURE FAILURE]', error);
       throw new AppError(`Gagal menghubungi layanan Mi: ${error.message}`);

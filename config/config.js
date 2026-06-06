@@ -29,5 +29,11 @@ module.exports = {
     baseUrl: routerBaseUrl,
     chatModel: process.env.ROUTER_CHAT_MODEL || 'vpscombo',
     queryModel: process.env.ROUTER_QUERY_MODEL || 'fastcombo'
+  },
+  agnes: {
+    apiKey: process.env.AGNES_API_KEY,
+    baseUrl: process.env.AGNES_BASE_URL || 'https://apihub.agnes-ai.com',
+    imageModel: process.env.AGNES_IMAGE_MODEL || 'agnes-image-2.0-flash',
+    imageSize: process.env.AGNES_IMAGE_SIZE || '1024x1024'
   }
 };

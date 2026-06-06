@@ -12,7 +12,7 @@
 - No lint, typecheck, or test scripts are defined; do not invent them.
 
 ## Runtime state and env
-- `.env` is loaded by `config/config.js`; relevant keys are `OWNER_NUMBER`, `OWNER_PREFIX`, `USER_PREFIX`, `FERDEV_API_KEY`, `TELEGRAM_STICKER_API_KEY`, `TELEGRAM_STICKER_API_URL`, `MISTRAL_API_KEY`, `MISTRAL_MODEL`, `ROUTER_API_KEY`, `ROUTER_BASE_URL`, `ROUTER_PRODUCTION_BASE_URL`, `ROUTER_CHAT_MODEL`, `ROUTER_QUERY_MODEL`, and `NODE_ENV`.
+- `.env` is loaded by `config/config.js`; relevant keys are `OWNER_NUMBER`, `OWNER_PREFIX`, `USER_PREFIX`, `FERDEV_API_KEY`, `TELEGRAM_STICKER_API_KEY`, `TELEGRAM_STICKER_API_URL`, `MISTRAL_API_KEY`, `MISTRAL_MODEL`, `ROUTER_API_KEY`, `ROUTER_BASE_URL`, `ROUTER_PRODUCTION_BASE_URL`, `ROUTER_CHAT_MODEL`, `ROUTER_QUERY_MODEL`, `AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`, `AGNES_IMAGE_SIZE`, and `NODE_ENV`.
 - Router base URL switches by env: production always uses `http://localhost:20128` unless `ROUTER_PRODUCTION_BASE_URL` is set; non-production uses `ROUTER_BASE_URL` or falls back to `https://9router.icbear.space`.
 - Local runtime files are intentionally gitignored: `auth_info_baileys/`, `baileys_store.json`, `bot_logs.txt`, `storage/`, `temp/`, `.env`, and logs.
 - `settings.json` controls bot mode (`private` by default) and is read on every command; `features/SetModeFeature.js` writes it.
