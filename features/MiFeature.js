@@ -127,6 +127,20 @@ const WEB_SEARCH_KEYWORDS = [
   'mana yang terbaik sekarang'
 ];
 
+const MI_TOOL_REGISTRY = {
+  help: { featureName: 'help', ownerOnly: false, requiresMedia: false },
+  stats: { featureName: 'stats', ownerOnly: true, requiresMedia: false },
+  ping: { featureName: 'ping', ownerOnly: false, requiresMedia: false },
+  ig: { featureName: 'ig', ownerOnly: false, requiresMedia: false },
+  remini: { featureName: 'remini', ownerOnly: false, requiresMedia: true },
+  hd: { featureName: 'hd', ownerOnly: false, requiresMedia: true },
+  rvo: { featureName: 'rvo', ownerOnly: false, requiresMedia: true },
+  quote: { featureName: 'q', ownerOnly: false, requiresMedia: true },
+  telesticker: { featureName: 'ts', ownerOnly: false, requiresMedia: true },
+  smeme: { featureName: 'smeme', ownerOnly: false, requiresMedia: true },
+  setbot: { featureName: 'setbot', ownerOnly: true, requiresMedia: false }
+};
+
 function shouldSkipPayload(message) {
   if (!message) {
     return false;
@@ -292,17 +306,51 @@ function buildIntentMessages(prompt, hasMediaInput) {
         'Kamu bertugas mengklasifikasikan intent user untuk fitur WhatsApp AI.',
         'Balas hanya JSON valid tanpa markdown.',
         'Field wajib: mode, refined_prompt, size.',
-        'mode hanya boleh salah satu: chat, analyze, generate_image, generate_sticker, edit_image, edit_sticker.',
+        'mode hanya boleh salah satu: chat, analyze, generate_image, generate_sticker, edit_image, edit_sticker, tool_call.',
         'Kalau ada typo seperti gmbr, gbar, stker, stciker, bikinin, ubahin, pahami maksud user.',
         `Kalau has_media_input=${hasMediaInput ? 'true' : 'false'}.`,
         'Jika user minta bikin gambar baru, pilih generate_image.',
         'Jika user minta bikin sticker/stiker baru, pilih generate_sticker.',
         'Jika ada media input dan user minta mengubah isi/media, pilih edit_image atau edit_sticker.',
         'Jika ada media input dan user hanya bertanya/menjelaskan isi media, pilih analyze.',
+        'Jika user meminta menjalankan fitur bot seperti help, stats, rvo, remini, ig, ping, q, ts, smeme, hd, atau setbot, pilih tool_call.',
         'Jika user hanya bertanya biasa tanpa media generation/edit, pilih chat.',
+        'Untuk size, pahami orientasi permintaan user. Contoh: portrait/potrait/story/vertikal -> 1024x1536, landscape/banner/horizontal -> 1536x1024, square/persegi/sticker -> 1024x1024.',
         'Gunakan size aman. Default 1024x1024 jika tidak jelas.',
         'refined_prompt harus rapi, jelas, dan siap dikirim ke model gambar jika mode generate/edit.',
         'Contoh output: {"mode":"generate_sticker","refined_prompt":"cute angry banana sticker, expressive, clean background, high quality","size":"1024x1024"}'
+      ].join(' ')
+    },
+    {
+      role: 'user',
+      content: prompt
+    }
+  ];
+}
+
+function buildToolMessages(prompt, hasMediaInput) {
+  return [
+    {
+      role: 'system',
+      content: [
+        'Kamu bertugas memilih fitur bot yang paling cocok untuk dijalankan.',
+        'Balas hanya JSON valid tanpa markdown.',
+        'Field wajib: tool, args_text.',
+        `Kalau has_media_input=${hasMediaInput ? 'true' : 'false'}.`,
+        'Daftar tool yang boleh: help, stats, ping, ig, remini, hd, rvo, quote, telesticker, smeme, setbot.',
+        'Gunakan help untuk permintaan menu/bantuan/daftar command.',
+        'Gunakan stats untuk status/statistik bot.',
+        'Gunakan ping untuk tes respon bot.',
+        'Gunakan ig untuk download Instagram.',
+        'Gunakan remini untuk HD/increase quality gambar.',
+        'Gunakan hd untuk convert video document jadi HD status/player.',
+        'Gunakan rvo untuk ekstrak view once.',
+        'Gunakan quote untuk quotly/q.',
+        'Gunakan telesticker untuk import Telegram sticker atau sticker tools ts.',
+        'Gunakan smeme untuk bikin sticker meme dari gambar/sticker reply.',
+        'Gunakan setbot hanya untuk ubah mode public/private.',
+        'Kalau tool butuh reply media tapi user belum memberi media, tetap pilih tool yang paling cocok dan biarkan fitur asli yang memvalidasi.',
+        'Contoh output: {"tool":"stats","args_text":""}'
       ].join(' ')
     },
     {
@@ -682,8 +730,64 @@ class MiFeature {
   }
 
   normalizeMode(value) {
-    const allowed = new Set(['chat', 'analyze', 'generate_image', 'generate_sticker', 'edit_image', 'edit_sticker']);
+    const allowed = new Set(['chat', 'analyze', 'generate_image', 'generate_sticker', 'edit_image', 'edit_sticker', 'tool_call']);
     return allowed.has(value) ? value : 'chat';
+  }
+
+  isSimpleStickerConversion(prompt, imagePayload) {
+    if (!imagePayload) {
+      return false;
+    }
+
+    const text = String(prompt || '').toLowerCase();
+    const mentionsSticker = /(stiker|sticker|stker|stciker)/.test(text);
+    const mentionsComplexEdit = /(background|latar|anime|3d|warna|color|ganti|edit|ubah.+jadi|replace|hapus|remove|tambahkan|add|pakai style|style)/.test(text);
+
+    return mentionsSticker && !mentionsComplexEdit;
+  }
+
+  inferSizeFromPrompt(prompt, mode) {
+    const text = String(prompt || '').toLowerCase();
+
+    if (mode === 'generate_sticker' || mode === 'edit_sticker') {
+      return '1024x1024';
+    }
+
+    if (/\b(portrait|potrait|vertikal|vertical|story|poster|full body|setengah badan)\b/.test(text)) {
+      return '1024x1536';
+    }
+
+    if (/\b(landscape|horizontal|banner|wide|panorama|thumbnail youtube)\b/.test(text)) {
+      return '1536x1024';
+    }
+
+    if (/\b(square|persegi|kotak|sticker|stiker|logo|icon|ikon|pp|profil)\b/.test(text)) {
+      return '1024x1024';
+    }
+
+    return config.agnes?.imageSize || '1024x1024';
+  }
+
+  normalizeSize(size, prompt, mode) {
+    const normalized = String(size || '').trim().toLowerCase();
+
+    if (/^\d+x\d+$/.test(normalized)) {
+      return normalized;
+    }
+
+    if (['portrait', 'potrait', 'vertical', 'vertikal', 'story'].includes(normalized)) {
+      return '1024x1536';
+    }
+
+    if (['landscape', 'horizontal', 'banner', 'wide'].includes(normalized)) {
+      return '1536x1024';
+    }
+
+    if (['square', 'persegi', 'sticker', 'stiker'].includes(normalized)) {
+      return '1024x1024';
+    }
+
+    return this.inferSizeFromPrompt(prompt, mode);
   }
 
   safeParseIntent(raw, fallbackPrompt, hasMediaInput) {
@@ -692,22 +796,24 @@ class MiFeature {
       return {
         mode: hasMediaInput ? 'analyze' : 'chat',
         refined_prompt: fallbackPrompt,
-        size: config.agnes?.imageSize || '1024x1024'
+        size: this.normalizeSize('', fallbackPrompt, hasMediaInput ? 'analyze' : 'chat')
       };
     }
 
     try {
       const parsed = JSON.parse(match[0]);
+      const mode = this.normalizeMode(parsed.mode);
+      const refinedPrompt = String(parsed.refined_prompt || fallbackPrompt).trim() || fallbackPrompt;
       return {
-        mode: this.normalizeMode(parsed.mode),
-        refined_prompt: String(parsed.refined_prompt || fallbackPrompt).trim() || fallbackPrompt,
-        size: String(parsed.size || config.agnes?.imageSize || '1024x1024').trim() || (config.agnes?.imageSize || '1024x1024')
+        mode,
+        refined_prompt: refinedPrompt,
+        size: this.normalizeSize(parsed.size, refinedPrompt, mode)
       };
     } catch {
       return {
         mode: hasMediaInput ? 'analyze' : 'chat',
         refined_prompt: fallbackPrompt,
-        size: config.agnes?.imageSize || '1024x1024'
+        size: this.normalizeSize('', fallbackPrompt, hasMediaInput ? 'analyze' : 'chat')
       };
     }
   }
@@ -715,6 +821,73 @@ class MiFeature {
   async detectIntent(prompt, hasMediaInput, client) {
     const raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
     return this.safeParseIntent(raw, prompt, hasMediaInput);
+  }
+
+  safeParseTool(raw) {
+    const match = String(raw || '').match(/\{[\s\S]*\}/);
+    if (!match) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(match[0]);
+      const tool = String(parsed.tool || '').toLowerCase().trim();
+      if (!MI_TOOL_REGISTRY[tool]) {
+        return null;
+      }
+
+      return {
+        tool,
+        argsText: String(parsed.args_text || '').trim()
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async detectTool(prompt, hasMediaInput, client) {
+    const raw = await client.chat(buildToolMessages(prompt, hasMediaInput), config.router?.queryModel);
+    return this.safeParseTool(raw);
+  }
+
+  isOwnerMessage(m, parsed) {
+    const sender = parsed.sender || '';
+    const normalizedSender = sender.replace('@s.whatsapp.net', '').replace('@lid', '');
+    return m.key.fromMe || normalizedSender === config.ownerNumber;
+  }
+
+  buildToolParsed(parsed, toolConfig, argsText) {
+    return {
+      ...parsed,
+      command: toolConfig.featureName,
+      argText: argsText,
+      args: argsText ? argsText.split(/\s+/) : []
+    };
+  }
+
+  async executeToolCall(m, sock, parsed, client, prompt, hasMediaInput, statusMessage, startMs) {
+    await this.editStatus(sock, parsed.remoteJid, statusMessage, startMs, 'Memilih fitur bot yang cocok...');
+    const toolDecision = await this.detectTool(prompt, hasMediaInput, client);
+
+    if (!toolDecision) {
+      throw new Error('Belum bisa menentukan fitur bot yang cocok.');
+    }
+
+    const toolConfig = MI_TOOL_REGISTRY[toolDecision.tool];
+    const features = Helper.loadFeatures();
+    const feature = features.get(toolConfig.featureName);
+
+    if (!feature) {
+      throw new Error(`Fitur ${toolConfig.featureName} tidak ditemukan.`);
+    }
+
+    if ((toolConfig.ownerOnly || feature.ownerOnly) && !this.isOwnerMessage(m, parsed)) {
+      throw new Error('Fitur ini hanya bisa dijalankan owner bot.');
+    }
+
+    await this.editStatus(sock, parsed.remoteJid, statusMessage, startMs, `Menjalankan fitur ${toolConfig.featureName}...`);
+    await feature.execute(m, sock, this.buildToolParsed(parsed, toolConfig, toolDecision.argsText));
+    await this.finishStatus(sock, parsed.remoteJid, statusMessage, 'Selesai.', m);
   }
 
   async needsWebSearch(prompt, client) {
@@ -750,6 +923,21 @@ class MiFeature {
     const mediaBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
     const mediaBase64 = mediaBuffer.toString('base64');
     return client.chat(buildVisionMessages(prompt, mediaBase64, imagePayload.mimeType));
+  }
+
+  async convertMediaToSticker(sock, remoteJid, m, statusMessage, startMs, imagePayload) {
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengubah media jadi sticker...');
+    const inputBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
+    const stickerBuffer = await sharp(inputBuffer)
+      .resize(512, 512, {
+        fit: 'contain',
+        background: { r: 0, g: 0, b: 0, alpha: 0 }
+      })
+      .webp({ lossless: true })
+      .toBuffer();
+
+    await sock.sendMessage(remoteJid, { sticker: stickerBuffer }, { quoted: m });
+    await this.finishStatus(sock, remoteJid, statusMessage, 'Selesai.', m);
   }
 
   async generateOrEditMedia(sock, remoteJid, m, statusMessage, startMs, prompt, imagePayload, mode, size) {
@@ -879,6 +1067,12 @@ class MiFeature {
 
     try {
       statusMessage = await this.sendStatus(sock, remoteJid, m, startMs, 'Memahami permintaan...');
+
+      if (this.isSimpleStickerConversion(userPrompt || finalPrompt, imagePayload)) {
+        await this.convertMediaToSticker(sock, remoteJid, m, statusMessage, startMs, imagePayload);
+        return;
+      }
+
       const intent = await this.detectIntent(userPrompt || finalPrompt, Boolean(imagePayload), client);
 
       if (intent.mode === 'analyze') {
@@ -915,6 +1109,11 @@ class MiFeature {
           intent.mode,
           intent.size || config.agnes?.imageSize
         );
+        return;
+      }
+
+      if (intent.mode === 'tool_call') {
+        await this.executeToolCall(m, sock, parsed, client, userPrompt || finalPrompt, Boolean(imagePayload), statusMessage, startMs);
         return;
       }
 
