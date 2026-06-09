@@ -65,7 +65,28 @@ async function connectToWhatsApp() {
       keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
     },
     browser: ['Botwa DEV Mode v1', 'Chrome', '3.0'],
-    markOnlineOnConnect: true
+    markOnlineOnConnect: true,
+    patchMessageBeforeSending: (message) => {
+      const requiresPatch = !!(
+        message.buttonsMessage ||
+        message.templateMessage ||
+        message.listMessage
+      );
+      if (requiresPatch) {
+        message = {
+          viewOnceMessage: {
+            message: {
+              messageContextInfo: {
+                deviceListMetadataVersion: 2,
+                deviceListMetadata: {}
+              },
+              ...message
+            }
+          }
+        };
+      }
+      return message;
+    }
   });
   storeService.attachSocket(sock);
 

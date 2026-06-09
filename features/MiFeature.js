@@ -958,7 +958,7 @@ class MiFeature {
       const imageDataUri = `data:${imagePayload.mimeType};base64,${inputBuffer.toString('base64')}`;
       result = await agnesClient.edit(prompt, imageDataUri, size);
     } else {
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Generating gambar...');
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Generating gambar ...');
       result = await agnesClient.generate(prompt, size);
     }
 

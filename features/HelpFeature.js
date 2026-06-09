@@ -26,8 +26,12 @@ class HelpFeature {
 
     let ownerCommands = [];
     let userCommands = [];
+    let totalVisible = 0;
 
     features.forEach((feature) => {
+      if (feature.hidden) return; // Hide hidden commands
+      totalVisible++;
+      
       // Gunakan Formatter.code() untuk command biar rapi
       const cmd = Formatter.code(`${feature.ownerOnly ? config.ownerPrefix : config.userPrefix}${feature.name}`);
       const line = `${cmd} — ${feature.description}`;
@@ -54,7 +58,7 @@ class HelpFeature {
       ...(userCommands.length ? userCommands : [Formatter.italic('Tidak ada')]),
       
       '',
-      Formatter.quote(`Total features: ${features.size}`),
+      Formatter.quote(`Total features: ${totalVisible}`),
       Formatter.quote(`Prefix: Owner ${Formatter.code(config.ownerPrefix)} | User ${Formatter.code(config.userPrefix)}`)
     ].join('\n');
 

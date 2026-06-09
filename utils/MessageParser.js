@@ -2,11 +2,13 @@ const config = require('../config/config');
 
 class MessageParser {
   static parse(m, sock) {
-    const messageType = Object.keys(m.message)[0];
-    const content = m.message[messageType];
+    // Handle viewOnceMessage wrapper which often wraps buttons response
+    const rawMsg = m.message?.viewOnceMessage?.message || m.message?.viewOnceMessageV2?.message || m.message;
+    const messageType = Object.keys(rawMsg)[0];
+    const content = rawMsg[messageType];
     
     // 1. Extract Body (Raw Text)
-    // Handle conversation, extendedText, image caption, etc.
+    // Handle conversation, extendedText, image caption, dll.
     let body = '';
     if (messageType === 'conversation') {
       body = content;
@@ -15,8 +17,18 @@ class MessageParser {
     } else if (messageType === 'imageMessage' || messageType === 'videoMessage') {
       body = content.caption || '';
     } else if (messageType === 'documentMessage') {
-        // Some docs have captions
-       body = content.caption || '';
+      body = content.caption || '';
+    } else if (messageType === 'interactiveResponseMessage') {
+      try {
+        const responseJSON = JSON.parse(content.nativeFlowResponseMessage?.paramsJson || '{}');
+        body = responseJSON.id || '';
+      } catch (e) {
+        body = '';
+      }
+    } else if (messageType === 'buttonsResponseMessage') {
+      body = content.selectedButtonId || '';
+    } else if (messageType === 'templateButtonReplyMessage') {
+      body = content.selectedId || '';
     }
 
     body = body || ''; // ensure string
@@ -33,14 +45,10 @@ class MessageParser {
 
     // 4. Command Parsing
     // Dynamic prefix from config
-    // Escape special regex characters if needed
     const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const ownerPrefix = escapeRegex(config.ownerPrefix);
     const userPrefix = escapeRegex(config.userPrefix);
     
-    // Construct regex: ^(!|&)
-    // Adding common temp prefixes just in case or stick to strict config?
-    // User said "cuma ada ! sama &". Let's stick to config.
     const prefixRegex = new RegExp(`^(${ownerPrefix}|${userPrefix})`);
     
     const isCmd = prefixRegex.test(body);
@@ -50,8 +58,6 @@ class MessageParser {
     // Split by newline or space to get the first word
     const [commandWord, ...args] = trimmedBody.split(/\s+/);
     
-    // If command, slice the prefix length. 
-    // If not command, we just take the word (though main.js should block it)
     const command = isCmd ? commandWord.slice(prefix.length).toLowerCase() : commandWord.toLowerCase();
     const argText = args.join(' ');
 
@@ -76,3 +82,4 @@ class MessageParser {
 }
 
 module.exports = MessageParser;
+
