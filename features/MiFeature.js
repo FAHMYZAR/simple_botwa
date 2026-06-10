@@ -309,18 +309,18 @@ function buildIntentMessages(prompt, hasMediaInput) {
         'Balas hanya JSON valid tanpa markdown.',
         'Field wajib: mode, refined_prompt, size.',
         'mode hanya boleh salah satu: chat, analyze, generate_image, generate_sticker, edit_image, edit_sticker, tool_call.',
-        'Kalau ada typo seperti gmbr, gbar, stker, stciker, bikinin, ubahin, pahami maksud user.',
-        `Kalau has_media_input=${hasMediaInput ? 'true' : 'false'}.`,
+        'PENTING: JANGAN pilih tool_call untuk pertanyaan informasi, berita, saham, kurs, cuaca, atau pencarian fakta.',
+        'Mode "chat" otomatis memiliki akses ke Web Search untuk mencari data terbaru. Gunakan "chat" untuk pertanyaan umum.',
+        'Pilih "tool_call" HANYA JIKA user secara eksplisit ingin menjalankan fitur bot sistem, seperti: ping, stats, ig, remini, rvo, hd, q, ts, smeme.',
         'Jika user minta bikin gambar baru, pilih generate_image.',
         'Jika user minta bikin sticker/stiker baru, pilih generate_sticker.',
         'Jika ada media input dan user minta mengubah isi/media, pilih edit_image atau edit_sticker.',
         'Jika ada media input dan user hanya bertanya/menjelaskan isi media, pilih analyze.',
-        'Jika user meminta menjalankan fitur bot seperti help, stats, rvo, remini, ig, ping, q, ts, smeme, hd, atau setbot, pilih tool_call.',
-        'Jika user hanya bertanya biasa tanpa media generation/edit, pilih chat.',
-        'Untuk size, pahami orientasi permintaan user. Contoh: portrait/potrait/story/vertikal -> 1024x1536, landscape/banner/horizontal -> 1536x1024, square/persegi/sticker -> 1024x1024.',
-        'Gunakan size aman. Default 1024x1024 jika tidak jelas.',
-        'refined_prompt harus rapi, jelas, dan siap dikirim ke model gambar jika mode generate/edit.',
-        'Contoh output: {"mode":"generate_sticker","refined_prompt":"cute angry banana sticker, expressive, clean background, high quality","size":"1024x1024"}'
+        'Contoh 1: "berapa harga dollar hari ini?" -> {"mode":"chat","refined_prompt":"berapa harga dollar hari ini?","size":"1024x1024"}',
+        'Contoh 2: "bikin foto anjing" -> {"mode":"generate_image","refined_prompt":"foto anjing, kualitas tinggi","size":"1024x1024"}',
+        'Contoh 3: "reminikan foto ini" -> {"mode":"tool_call","refined_prompt":"reminikan foto ini","size":"1024x1024"}',
+        `Kalau has_media_input=${hasMediaInput ? 'true' : 'false'}.`,
+        'Untuk size, gunakan orientasi aman 1024x1024 kecuali disebut potrait/landscape.'
       ].join(' ')
     },
     {
@@ -875,6 +875,18 @@ class MiFeature {
   }
 
   async detectIntent(prompt, hasMediaInput, client) {
+    const text = String(prompt || '').toLowerCase();
+
+    if (/(cari|carikan|info|berita|saham|kurs|harga|cuaca|dollar|ihsg|terkini|terbaru|hari ini)/.test(text)) {
+      if (!/(bikin|buat|jadikan|ubah|edit)/.test(text)) {
+        return { mode: 'chat', refined_prompt: prompt, size: '1024x1024' };
+      }
+    }
+
+    if (/(remini|hd|rvo|ts|telesticker|smeme|setbot|ping|stats)/.test(text)) {
+      return { mode: 'tool_call', refined_prompt: prompt, size: '1024x1024' };
+    }
+
     const raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
     return this.safeParseIntent(raw, prompt, hasMediaInput);
   }
@@ -902,6 +914,28 @@ class MiFeature {
   }
 
   async detectTool(prompt, hasMediaInput, client) {
+    const text = String(prompt || '').toLowerCase();
+
+    if (/(remini|hd|rvo|ts|telesticker|smeme|setbot|ping|stats)/.test(text)) {
+      const tool = /remini/.test(text)
+        ? 'remini'
+        : /\bhd\b/.test(text)
+          ? 'hd'
+          : /\brvo\b/.test(text)
+            ? 'rvo'
+            : /(ts|telesticker)/.test(text)
+              ? 'telesticker'
+              : /smeme/.test(text)
+                ? 'smeme'
+                : /setbot/.test(text)
+                  ? 'setbot'
+                  : /stats/.test(text)
+                    ? 'stats'
+                    : 'ping';
+
+      return { tool, argsText: prompt };
+    }
+
     const raw = await client.chat(buildToolMessages(prompt, hasMediaInput), config.router?.queryModel);
     return this.safeParseTool(raw);
   }
