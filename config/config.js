@@ -30,6 +30,10 @@ module.exports = {
     chatModel: process.env.ROUTER_CHAT_MODEL || 'vpscombo',
     queryModel: process.env.ROUTER_QUERY_MODEL || 'fastcombo'
   },
+  googleAi: {
+    apiKey: process.env.GOOGLE_AI_API_KEY,
+    baseUrl: process.env.GOOGLE_AI_BASE_URL || 'https://googleai.minurulfalahsindangkarsa.com'
+  },
   agnes: {
     apiKey: process.env.AGNES_API_KEY,
     baseUrl: process.env.AGNES_BASE_URL || 'https://apihub.agnes-ai.com',

@@ -2,8 +2,8 @@ const Formatter = require('../utils/Formatter');
 
 class CekChannelFeature {
   constructor() {
-    this.name = 'cekchannel';
-    this.description = 'Cek ID Saluran (Newsletter JID) dari pesan yang di-forward';
+    this.name = 'cekch';
+    this.description = 'Cek id Ch';
     this.ownerOnly = true;
   }
 

@@ -1,4 +1,6 @@
 const sharp = require('sharp');
+const axios = require('axios');
+const FormData = require('form-data');
 const config = require('../config/config');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
@@ -358,6 +360,40 @@ function buildToolMessages(prompt, hasMediaInput) {
       content: prompt
     }
   ];
+}
+
+async function getGoogleAiSearchData(prompt, systemPrompt) {
+  try {
+    const messages = systemPrompt
+      ? [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }]
+      : [{ role: 'user', content: prompt }];
+
+    const baseUrl = String(config.googleAi?.baseUrl || '').replace(/\/$/, '');
+    const apiKey = config.googleAi?.apiKey;
+
+    if (!baseUrl || !apiKey) {
+      return null;
+    }
+
+    const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'google-ai-mode',
+        messages,
+        stream: false
+      })
+    });
+    
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?.choices?.[0]?.message?.content || null;
+  } catch (err) {
+    return null;
+  }
 }
 
 class RouterClient {
@@ -819,7 +855,15 @@ class MiFeature {
   }
 
   async detectIntent(prompt, hasMediaInput, client) {
-    const raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
+    let raw = await getGoogleAiSearchData([
+      buildIntentMessages(prompt, hasMediaInput)[0].content,
+      `PROMPT_USER: ${prompt}`
+    ].join('\n\n'));
+
+    if (!raw) {
+      raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
+    }
+
     return this.safeParseIntent(raw, prompt, hasMediaInput);
   }
 
@@ -846,7 +890,15 @@ class MiFeature {
   }
 
   async detectTool(prompt, hasMediaInput, client) {
-    const raw = await client.chat(buildToolMessages(prompt, hasMediaInput), config.router?.queryModel);
+    let raw = await getGoogleAiSearchData([
+      buildToolMessages(prompt, hasMediaInput)[0].content,
+      `PROMPT_USER: ${prompt}`
+    ].join('\n\n'));
+
+    if (!raw) {
+      raw = await client.chat(buildToolMessages(prompt, hasMediaInput), config.router?.queryModel);
+    }
+
     return this.safeParseTool(raw);
   }
 
@@ -921,6 +973,38 @@ class MiFeature {
 
   async analyzeMedia(client, prompt, imagePayload) {
     const mediaBuffer = await Helper.downloadMedia(imagePayload.content, imagePayload.downloadType);
+
+    try {
+      const form = new FormData();
+      form.append('message', prompt);
+      form.append('file', mediaBuffer, {
+        filename: 'image.jpg',
+        contentType: imagePayload.mimeType || 'image/jpeg'
+      });
+
+      const baseUrl = String(config.googleAi?.baseUrl || '').replace(/\/$/, '');
+      const apiKey = config.googleAi?.apiKey;
+
+      if (!baseUrl || !apiKey) {
+        throw new Error('Google AI config belum diset.');
+      }
+
+      const response = await axios.post(`${baseUrl}/v1/chat/file`, form, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          ...form.getHeaders()
+        },
+        timeout: 60000
+      });
+
+      const data = response.data;
+      if (data && data.success && data.content) {
+        return data.content;
+      }
+    } catch (err) {
+      console.error('[Google AI File Error]', err.message);
+    }
+
     const mediaBase64 = mediaBuffer.toString('base64');
     return client.chat(buildVisionMessages(prompt, mediaBase64, imagePayload.mimeType));
   }
@@ -985,24 +1069,29 @@ class MiFeature {
   }
 
   async handleChatMode(sock, remoteJid, m, statusMessage, startMs, finalPrompt, client) {
-    const shouldSearch = await this.needsWebSearch(finalPrompt, client);
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengambil data dari Google AI (Primary)...');
+    let googleRaw = await getGoogleAiSearchData(finalPrompt);
 
-    let finalAnswer;
-    if (!shouldSearch) {
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Gaperlu golek jawaban nek internet, gampang iki..');
-      finalAnswer = await client.chat(buildDirectAnswerMessages(finalPrompt));
-    } else {
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Pertanyaan mu butuh data terbaru, tak goleki nek web sek ya..');
-      const searchDataAwal = await client.search(finalPrompt, 5);
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Hasil awal sudah didapat.');
-      const refinedQuery = String(await client.chat(buildRefineMessages(finalPrompt, searchDataAwal), config.router?.queryModel)).trim().replace(/^"|"$/g, '');
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, `Keputusan final: ${refinedQuery || finalPrompt}`);
-      const searchDataFinal = await client.search(refinedQuery || finalPrompt, 8);
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Sedelak maning..');
-      finalAnswer = await client.chat(buildAnswerMessages(finalPrompt, searchDataFinal));
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, `Pencarian = ${refinedQuery || finalPrompt}`);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    if (!googleRaw) {
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Google AI gagal. Fallback ke pencarian biasa...');
+      const shouldSearch = await this.needsWebSearch(finalPrompt, client);
+      if (!shouldSearch) {
+        googleRaw = await client.chat(buildDirectAnswerMessages(finalPrompt));
+      } else {
+        const searchDataAwal = await client.search(finalPrompt, 5);
+        const refinedQuery = String(await client.chat(buildRefineMessages(finalPrompt, searchDataAwal), config.router?.queryModel)).trim().replace(/^"|"$/g, '');
+        const searchDataFinal = await client.search(refinedQuery || finalPrompt, 8);
+        googleRaw = await client.chat(buildAnswerMessages(finalPrompt, searchDataFinal));
+      }
     }
+
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Menyaring hasil dengan vpscombo...');
+    const filterMessages = [
+      { role: 'system', content: buildSystemInstruction() + '\n\nFormat ulang data berikut agar rapi sesuai gaya bahasa AI, to the point, dan langsung menjawab pertanyaan.' },
+      { role: 'user', content: `Pertanyaan: ${finalPrompt}\n\nData mentah:\n${googleRaw}` }
+    ];
+    let finalAnswer = await client.chat(filterMessages, config.router?.chatModel || 'vpscombo');
+
 
     let output = String(finalAnswer || '')
       .replace(/\*\*(.*?)\*\*/g, '*$1*')
