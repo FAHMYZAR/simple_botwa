@@ -726,8 +726,9 @@ class AgnesImageClient {
 class MiFeature {
   constructor() {
     this.name = 'mi';
-    this.description = '_(Mi AI Search) by fahmyzzx_';
+    this.description = '_(Ai Aja)_';
     this.ownerOnly = false;
+    this.statusTrackers = new Map();
   }
 
   formatElapsed(startMs) {
@@ -740,7 +741,18 @@ class MiFeature {
   }
 
   async sendStatus(sock, remoteJid, m, startMs, text) {
-    return sock.sendMessage(remoteJid, { text: this.formatStatus(startMs, text) }, { quoted: m });
+    const msg = await sock.sendMessage(remoteJid, { text: this.formatStatus(startMs, text) }, { quoted: m });
+
+    const interval = setInterval(() => {
+      sock.sendMessage(remoteJid, {
+        text: this.formatStatus(startMs, this.statusTrackers.get(msg.key.id) || text),
+        edit: msg.key
+      }).catch(() => {});
+    }, 1000);
+
+    this.statusTrackers.set(msg.key.id + '_interval', interval);
+    this.statusTrackers.set(msg.key.id, text);
+    return msg;
   }
 
   async editStatus(sock, remoteJid, statusMessage, startMs, text) {
@@ -748,6 +760,7 @@ class MiFeature {
       return sock.sendMessage(remoteJid, { text: this.formatStatus(startMs, text) });
     }
 
+    this.statusTrackers.set(statusMessage.key.id, text);
     return sock.sendMessage(remoteJid, {
       text: this.formatStatus(startMs, text),
       edit: statusMessage.key
@@ -755,6 +768,13 @@ class MiFeature {
   }
 
   async finishStatus(sock, remoteJid, statusMessage, output, m) {
+    if (statusMessage?.key) {
+      const interval = this.statusTrackers.get(statusMessage.key.id + '_interval');
+      if (interval) clearInterval(interval);
+      this.statusTrackers.delete(statusMessage.key.id + '_interval');
+      this.statusTrackers.delete(statusMessage.key.id);
+    }
+
     if (!statusMessage?.key) {
       return sock.sendMessage(remoteJid, { text: output }, { quoted: m });
     }
@@ -855,15 +875,7 @@ class MiFeature {
   }
 
   async detectIntent(prompt, hasMediaInput, client) {
-    let raw = await getGoogleAiSearchData([
-      buildIntentMessages(prompt, hasMediaInput)[0].content,
-      `PROMPT_USER: ${prompt}`
-    ].join('\n\n'));
-
-    if (!raw) {
-      raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
-    }
-
+    const raw = await client.chat(buildIntentMessages(prompt, hasMediaInput), config.router?.queryModel);
     return this.safeParseIntent(raw, prompt, hasMediaInput);
   }
 
@@ -890,15 +902,7 @@ class MiFeature {
   }
 
   async detectTool(prompt, hasMediaInput, client) {
-    let raw = await getGoogleAiSearchData([
-      buildToolMessages(prompt, hasMediaInput)[0].content,
-      `PROMPT_USER: ${prompt}`
-    ].join('\n\n'));
-
-    if (!raw) {
-      raw = await client.chat(buildToolMessages(prompt, hasMediaInput), config.router?.queryModel);
-    }
-
+    const raw = await client.chat(buildToolMessages(prompt, hasMediaInput), config.router?.queryModel);
     return this.safeParseTool(raw);
   }
 
@@ -1069,11 +1073,11 @@ class MiFeature {
   }
 
   async handleChatMode(sock, remoteJid, m, statusMessage, startMs, finalPrompt, client) {
-    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengambil data dari Google AI (Primary)...');
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mencari informasi...');
     let googleRaw = await getGoogleAiSearchData(finalPrompt);
 
     if (!googleRaw) {
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Google AI gagal. Fallback ke pencarian biasa...');
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Gagal ambil data, coba sumber lain...');
       const shouldSearch = await this.needsWebSearch(finalPrompt, client);
       if (!shouldSearch) {
         googleRaw = await client.chat(buildDirectAnswerMessages(finalPrompt));
@@ -1085,7 +1089,7 @@ class MiFeature {
       }
     }
 
-    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Menyaring hasil dengan vpscombo...');
+    await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Mengolah jawaban...');
     const filterMessages = [
       { role: 'system', content: buildSystemInstruction() + '\n\nFormat ulang data berikut agar rapi sesuai gaya bahasa AI, to the point, dan langsung menjawab pertanyaan.' },
       { role: 'user', content: `Pertanyaan: ${finalPrompt}\n\nData mentah:\n${googleRaw}` }
@@ -1101,7 +1105,7 @@ class MiFeature {
       .trim();
 
     if (!output) {
-      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Respon kosong, mencoba ulang pakai model cepat');
+      await this.editStatus(sock, remoteJid, statusMessage, startMs, 'Coba ulang...');
       const retryAnswer = await client.chat([
         {
           role: 'system',
@@ -1122,7 +1126,7 @@ class MiFeature {
     }
 
     if (!output) {
-      throw new Error('Respon Mi kosong setelah retry model cepat.');
+      throw new Error('Gagal menghasilkan jawaban.');
     }
 
     await this.finishStatus(sock, remoteJid, statusMessage, output, m);
@@ -1208,6 +1212,12 @@ class MiFeature {
 
       await this.handleChatMode(sock, remoteJid, m, statusMessage, startMs, finalPrompt, client);
     } catch (error) {
+      if (statusMessage?.key) {
+        const interval = this.statusTrackers.get(statusMessage.key.id + '_interval');
+        if (interval) clearInterval(interval);
+        this.statusTrackers.delete(statusMessage.key.id + '_interval');
+        this.statusTrackers.delete(statusMessage.key.id);
+      }
       console.error('[MI FEATURE FAILURE]', error);
       throw new AppError(`Gagal menghubungi layanan Mi: ${error.message}`);
     }
