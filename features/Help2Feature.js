@@ -1,4 +1,4 @@
-const { generateWAMessageFromContent, proto, isJidGroup } = require('@whiskeysockets/baileys');
+const { generateWAMessageFromContent, proto, isJidGroup } = require('@mataram/wa');
 const Helper = require('../utils/helper');
 const config = require('../config/config');
 const Formatter = require('../utils/Formatter');

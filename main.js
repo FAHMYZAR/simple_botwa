@@ -1,4 +1,4 @@
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestVersion, makeCacheableSignalKeyStore, Browsers, jidNormalizedUser, areJidsSameUser } = require('@mataram/wa');
 const util = require('util');
 const fs = require('fs');
 const path = require('path');
@@ -43,6 +43,55 @@ const rateLimitService = new RateLimitService(60000, 5);
 // Initialize AFK Service
 const afkService = new AfkService();
 
+const lidToPnMap = new Map();
+
+function normalizeJid(jid) {
+  if (!jid) return '';
+  try {
+    return jidNormalizedUser(jid);
+  } catch (error) {
+    return jid;
+  }
+}
+
+function resolveSenderNumber(sender) {
+  const norm = normalizeJid(sender);
+  const bare = norm.split('@')[0].split(':')[0];
+  if (norm.endsWith('@lid') && lidToPnMap.has(bare)) {
+    return lidToPnMap.get(bare);
+  }
+  return bare.replace(/\D/g, '');
+}
+
+function isOwnerSender(m, parsed) {
+  if (m.key.fromMe) return true;
+
+  const candidates = [
+    m.key.senderPn,
+    m.key.participantPn,
+    m.key.remoteJidPn,
+    m.key.participantAlt,
+    m.key.remoteJidAlt,
+    m.key.participant,
+    m.key.remoteJid,
+    parsed.sender,
+    parsed.contextInfo?.participant
+  ].filter(Boolean);
+
+  const ownerNumber = config.ownerNumber;
+
+  const hasMatch = candidates.some(candidate => {
+    const num = resolveSenderNumber(candidate);
+    if (num === ownerNumber) return true;
+    try {
+      return areJidsSameUser(normalizeJid(candidate), normalizeJid(`${ownerNumber}@s.whatsapp.net`));
+    } catch (error) {
+      return false;
+    }
+  });
+
+  return hasMatch;
+}
 
 // Cleanup temp folder every minute
 setInterval(() => {
@@ -55,7 +104,7 @@ console.log(`📦 Loaded ${features.size} features`);
 
 async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
-  const { version } = await fetchLatestBaileysVersion();
+  const { version } = await fetchLatestVersion();
 
   const sock = makeWASocket({
     version,
@@ -64,29 +113,8 @@ async function connectToWhatsApp() {
       creds: state.creds,
       keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
     },
-    browser: ['Botwa DEV Mode v1', 'Chrome', '3.0'],
-    markOnlineOnConnect: true,
-    patchMessageBeforeSending: (message) => {
-      const requiresPatch = !!(
-        message.buttonsMessage ||
-        message.templateMessage ||
-        message.listMessage
-      );
-      if (requiresPatch) {
-        message = {
-          viewOnceMessage: {
-            message: {
-              messageContextInfo: {
-                deviceListMetadataVersion: 2,
-                deviceListMetadata: {}
-              },
-              ...message
-            }
-          }
-        };
-      }
-      return message;
-    }
+    browser: Browsers.macOS('Chrome'),
+    markOnlineOnConnect: true
   });
   storeService.attachSocket(sock);
 
@@ -111,6 +139,15 @@ async function connectToWhatsApp() {
   });
 
   sock.ev.on('creds.update', saveCreds);
+
+  sock.ev.on('lid-mapping.update', ({ lid, pn }) => {
+    const lidId = normalizeJid(lid).split('@')[0].split(':')[0];
+    const pnNumber = normalizeJid(pn).split('@')[0].split(':')[0].replace(/\D/g, '');
+    if (lidId && pnNumber) {
+      lidToPnMap.set(lidId, pnNumber);
+      console.log(`[LID] ${lidId} -> ${pnNumber}`);
+    }
+  });
 
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
       if (type !== 'notify') return;
@@ -154,9 +191,12 @@ async function connectToWhatsApp() {
       }
 
       // 3. Check Owner & Permissions (MOVED UP)
-      // Fix owner checking - handle both @s.whatsapp.net and @lid formats
-      const normalizedSender = sender.replace('@s.whatsapp.net', '').replace('@lid', '');
-      const isOwner = isFromMe || normalizedSender === config.ownerNumber;
+      const isOwner = isOwnerSender(m, parsed);
+
+      if (parsed.prefix === config.ownerPrefix && !isOwner) {
+        console.warn('[OWNER GUARD] Blocked', parsed.prefix, 'from', parsed.sender, 'LIDmap:', [...lidToPnMap.entries()]);
+        return;
+      }
 
       // 4. Check AFK Status (Bot-Level) - Skip if owner
       if (!isOwner && afkService.isAfkActive()) {

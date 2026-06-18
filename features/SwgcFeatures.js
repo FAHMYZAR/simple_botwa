@@ -4,7 +4,7 @@ const {
     generateWAMessageContent,
     generateWAMessageFromContent,
     downloadMediaMessage,
-} = require('@whiskeysockets/baileys');
+} = require('@mataram/wa');
 const crypto = require('crypto');
 
 class GroupStatusFeature {

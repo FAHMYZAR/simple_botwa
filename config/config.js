@@ -7,7 +7,11 @@ const routerBaseUrl = isProduction
   : (process.env.ROUTER_BASE_URL || defaultRouterBaseUrl);
 
 module.exports = {
-  ownerNumber: process.env.OWNER_NUMBER || '6285226166485',
+  ownerNumber: (process.env.OWNER_NUMBER || '6285226166485').replace(/\D/g, ''),
+  ownerJids: [
+    `${(process.env.OWNER_NUMBER || '6285226166485').replace(/\D/g, '')}@s.whatsapp.net`,
+    ...(process.env.OWNER_JIDS || '').split(',').map(jid => jid.trim()).filter(Boolean)
+  ],
   ownerPrefix: process.env.OWNER_PREFIX || '&',
   userPrefix: process.env.USER_PREFIX || '!',
   ferdev: {
@@ -33,6 +37,13 @@ module.exports = {
   googleAi: {
     apiKey: process.env.GOOGLE_AI_API_KEY,
     baseUrl: process.env.GOOGLE_AI_BASE_URL || 'https://googleai.minurulfalahsindangkarsa.com'
+  },
+  raising: {
+    nim: process.env.RAISING_NIM || '',
+    nim2: process.env.RAISING_NIM2 || '',
+    password: process.env.RAISING_PASSWORD || '',
+    password2: process.env.RAISING_PASSWORD2 || '',
+    baseUrl: 'https://raising.almaata.ac.id'
   },
   agnes: {
     apiKey: process.env.AGNES_API_KEY,

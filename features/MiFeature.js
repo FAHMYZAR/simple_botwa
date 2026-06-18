@@ -5,6 +5,7 @@ const config = require('../config/config');
 const Formatter = require('../utils/Formatter');
 const AppError = require('../utils/AppError');
 const Helper = require('../utils/helper');
+const { jidNormalizedUser, areJidsSameUser } = require('@mataram/wa');
 
 const SKIP_MESSAGE_TYPES = new Set([
   'videoMessage',
@@ -941,9 +942,21 @@ class MiFeature {
   }
 
   isOwnerMessage(m, parsed) {
-    const sender = parsed.sender || '';
-    const normalizedSender = sender.replace('@s.whatsapp.net', '').replace('@lid', '');
-    return m.key.fromMe || normalizedSender === config.ownerNumber;
+    if (m.key.fromMe) return true;
+    const candidates = [
+      parsed.sender,
+      m.key.participant,
+      m.key.remoteJid,
+      m.key.participantPn,
+      m.key.remoteJidPn,
+      m.key.senderPn
+    ].filter(Boolean);
+    const ownerJids = config.ownerJids.map(jid => jidNormalizedUser(jid));
+    return candidates.some(candidate => {
+      const normalizedCandidate = jidNormalizedUser(candidate);
+      if (ownerJids.some(ownerJid => areJidsSameUser(normalizedCandidate, ownerJid))) return true;
+      return normalizedCandidate.split('@')[0].split(':')[0].replace(/\D/g, '') === config.ownerNumber;
+    });
   }
 
   buildToolParsed(parsed, toolConfig, argsText) {

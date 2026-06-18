@@ -1,4 +1,4 @@
-const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+const { downloadMediaMessage } = require('@mataram/wa');
 const { createCanvas, loadImage } = require('canvas');
 const sharp = require('sharp');
 const Formatter = require('../utils/Formatter');

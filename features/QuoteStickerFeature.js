@@ -1,5 +1,5 @@
 const { QuoteGenerator } = require('qc-generator-whatsapp');
-const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+const { downloadMediaMessage } = require('@mataram/wa');
 const sharp = require('sharp');
 const axios = require('axios');
 const AppError = require('../utils/AppError');

@@ -39,7 +39,7 @@ class MessageParser {
     const quotedSender = contextInfo?.participant || null;
 
     // 3. Sender Info
-    const sender = m.key.participant || m.key.remoteJid;
+    const sender = m.key.participantAlt || m.key.participant || m.key.remoteJidAlt || m.key.remoteJid;
     const isGroup = m.key.remoteJid.endsWith('@g.us');
     const pushName = m.pushName || 'Unknown';
 
